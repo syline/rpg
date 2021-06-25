@@ -28,10 +28,4 @@ export class AuthenticationController {
   async login(@Req() request: RequestWithUser): Promise<AccessTokenDto> {
     return this.authenticationService.login(request.user);
   }
-  
-  // @Get()
-  // @UseGuards(JwtAuthenticationGuard)
-  // async findAll(): Promise<User[]> {
-  //   return this.userService.findAll();
-  // }
 }

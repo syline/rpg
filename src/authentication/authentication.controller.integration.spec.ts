@@ -50,57 +50,74 @@ describe('Given AuthenticationController', () => {
   });
 
   describe('When register a new user with valid data', () => {
-    beforeEach(() => {
+    let response;
+    beforeEach(async () => {
       userRepositoryMock.save.mockReturnValue(Promise.resolve(createUserData));
+      response = await request(app.getHttpServer())
+      .post('/authentication/register')
+      .send(createUserData);
+    });
+
+    it('Then response status code = 201', () => {
+      expect(response.statusCode).toEqual(201);
     });
 
     it('Then it should respond with user\'s data without the password', () => {
-      return request(app.getHttpServer())
-      .post('/authentication/register')
-      .send(createUserData)
-      .expect(201, { login: createUserData.login })
+      expect(response.body).toEqual({ login: createUserData.login });
     })
   })
 
   describe('When register a user with invalid data (login already exist)', () => {
-    beforeEach(() => {
+    let response;
+
+    beforeEach(async () => {
       userRepositoryMock.save.mockRejectedValue({ code: SqliteErrorsEnum.constraint });
+      response = await request(app.getHttpServer())
+      .post('/authentication/register')
+      .send(createUserData);
     });
 
-    it('Then it should throw an error (400)', () => {
-      return request(app.getHttpServer())
-      .post('/authentication/register')
-      .send(createUserData)
-      .expect(400);
+    it('Then it should throw an error (status code = 400)', () => {
+      expect(response.statusCode).toEqual(400);
     })
   })
 
   describe('When something get wrong during registering a user', () => {
-    beforeEach(() => {
+    let response;
+    
+    beforeEach(async () => {
       userRepositoryMock.save.mockRejectedValue(new Error());
+
+      response = await request(app.getHttpServer())
+      .post('/authentication/register')
+      .send(createUserData);
     });
 
     it('Then it should throw an error (500)', () => {
-      return request(app.getHttpServer())
-      .post('/authentication/register')
-      .send(createUserData)
-      .expect(500);
+      expect(response.statusCode).toEqual(500);
     })
   })
 
   describe('When log in with valid user and password', () => {
-    beforeEach(() => {
+    let response;
+
+    beforeEach(async () => {
       const mockUserData = new User({ id: 1, login: 'test', password: 'test' });
       userRepositoryMock.findOne.mockReturnValue(Promise.resolve(mockUserData));
       (bcrypt.compare as jest.Mock) = jest.fn().mockReturnValue(true);
       jwtServiceMock.sign.mockReturnValue('');
+
+      response = await request(app.getHttpServer())
+      .post('/authentication/login')
+      .send({ login: 'test', password: 'test' });
     });
 
-    it('Then it should retreieve access token', () => {
-      return request(app.getHttpServer())
-      .post('/authentication/login')
-      .send({ login: 'test', password: 'test' })
-      .expect(200, { accessToken: '' });
+    it('Then response status code = 200', () => {
+      expect(response.statusCode).toEqual(200);
+    });
+
+    it('Then it should retreive access token', () => {
+      expect(response.body).toEqual({ accessToken: '' });
     });
   })
 });
