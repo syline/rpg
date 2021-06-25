@@ -2,13 +2,13 @@ import { INestApplication } from '@nestjs/common';
 import { JwtModule, JwtService } from '@nestjs/jwt';
 import { Test, TestingModule } from '@nestjs/testing';
 import { getRepositoryToken } from '@nestjs/typeorm';
-import { CharactersService } from '../characters/characters.service';
+import * as request from 'supertest';
+import { JwtStrategy } from '../authentication/strategies/jwt.strategy';
+import { CharacterServiceProvider } from '../characters/characters.module';
 import { Character } from '../characters/entities/character.entity';
 import { characterRepositoryMock } from '../characters/mocks/characters.repository.mock';
-import { UsersController } from './users.controller';
-import * as request from 'supertest';
 import { JWT_SECRET } from '../constants/jwt.contant';
-import { JwtStrategy } from '../authentication/strategies/jwt.strategy';
+import { UsersController } from './users.controller';
 
 describe('Given UsersController', () => {
   let app: INestApplication;
@@ -25,7 +25,7 @@ describe('Given UsersController', () => {
       ],
       controllers: [UsersController],
       providers: [
-        CharactersService,
+        CharacterServiceProvider,
         JwtStrategy,
         {
           provide: getRepositoryToken(Character),

@@ -1,6 +1,8 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { getRepositoryToken } from '@nestjs/typeorm';
+import { ICHARACTERS_SERVICE } from '../constants/services.constant';
 import { Repository } from 'typeorm';
+import { CharacterServiceProvider } from './characters.module';
 import { CharactersService } from './characters.service';
 import { CreateCharacterDto } from './dto/create-character.dto';
 import { UpdateCharacterDto } from './dto/update-character.dto';
@@ -14,7 +16,7 @@ describe('Given CharactersService', () => {
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
       providers: [
-        CharactersService,
+        CharacterServiceProvider,
         {
           provide: getRepositoryToken(Character),
           useValue: characterRepositoryMock,
@@ -22,7 +24,7 @@ describe('Given CharactersService', () => {
       ],
     }).compile();
 
-    service = module.get<CharactersService>(CharactersService);
+    service = module.get<CharactersService>(ICHARACTERS_SERVICE);
     repository = module.get(getRepositoryToken(Character));
   });
 

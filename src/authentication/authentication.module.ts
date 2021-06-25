@@ -1,4 +1,4 @@
-import { Module } from '@nestjs/common';
+import { Module, Provider } from '@nestjs/common';
 import { UsersModule } from '../users/users.module';
 import { AuthenticationService } from './authentication.service';
 import { AuthenticationController } from './authentication.controller';
@@ -8,6 +8,11 @@ import { JwtModule } from '@nestjs/jwt';
 import { JWT_SECRET } from '../constants/jwt.contant';
 import { JwtStrategy } from './strategies/jwt.strategy';
 import { IAUTHENTICATION_SERVICE } from '../constants/services.constant';
+
+export const AuthenticationServiceProviders: Provider = { 
+  provide: IAUTHENTICATION_SERVICE, 
+  useClass: AuthenticationService,
+};
 
 @Module({
   imports: [
@@ -19,18 +24,12 @@ import { IAUTHENTICATION_SERVICE } from '../constants/services.constant';
     }),
   ],
   providers: [
-    { 
-      provide: IAUTHENTICATION_SERVICE, 
-      useClass: AuthenticationService,
-    },
+    AuthenticationServiceProviders,
     LocalStrategy,
     JwtStrategy,
   ],
   exports: [
-    { 
-      provide: IAUTHENTICATION_SERVICE, 
-      useClass: AuthenticationService,
-    },
+    AuthenticationServiceProviders,
   ],
   controllers: [
     AuthenticationController,

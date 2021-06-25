@@ -7,7 +7,7 @@ import { JwtStrategy } from '../authentication/strategies/jwt.strategy';
 import { JWT_SECRET } from '../constants/jwt.contant';
 import { User } from '../users/entities/user.entity';
 import { CharactersController } from './characters.controller';
-import { CharactersService } from './characters.service';
+import { CharacterServiceProvider } from './characters.module';
 import { CreateCharacterDto } from './dto/create-character.dto';
 import { UpdateCharacterDto } from './dto/update-character.dto';
 import { Character } from './entities/character.entity';
@@ -33,8 +33,8 @@ describe('Given CharactersController', () => {
         CharactersController,
       ],
       providers: [
-        CharactersService,
         JwtStrategy,
+        CharacterServiceProvider,
         {
           provide: getRepositoryToken(Character),
           useValue: characterRepositoryMock,

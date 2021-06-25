@@ -5,9 +5,10 @@ import { Repository, UpdateResult } from 'typeorm';
 import { CreateCharacterDto } from './dto/create-character.dto';
 import { UpdateCharacterDto } from './dto/update-character.dto';
 import { Character } from './entities/character.entity';
+import { ICharactersService } from './interfaces/icharacters.service';
 
 @Injectable()
-export class CharactersService {
+export class CharactersService implements ICharactersService {
   constructor(
     @InjectRepository(Character)
     private characterRepository: Repository<Character>,

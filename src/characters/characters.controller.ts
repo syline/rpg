@@ -1,15 +1,18 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Inject, Param, Patch, Post, UseGuards } from '@nestjs/common';
 import { DeleteResult, UpdateResult } from 'typeorm';
 import { JwtAuthenticationGuard } from '../authentication/guards/jwt-authentication.guard';
-import { CharactersService } from './characters.service';
+import { ICHARACTERS_SERVICE } from '../constants/services.constant';
 import { CreateCharacterDto } from './dto/create-character.dto';
 import { UpdateCharacterDto } from './dto/update-character.dto';
 import { Character } from './entities/character.entity';
+import { ICharactersService } from './interfaces/icharacters.service';
 
 @Controller('characters')
 @UseGuards(JwtAuthenticationGuard)
 export class CharactersController {
-  constructor(private readonly charactersService: CharactersService) {}
+  constructor(
+    @Inject(ICHARACTERS_SERVICE) private readonly charactersService: ICharactersService,
+  ) {}
 
   @Post()
   create(@Body() createCharacterDto: CreateCharacterDto): Promise<Character> {

@@ -3,14 +3,13 @@ import { JwtService } from '@nestjs/jwt';
 import { Test, TestingModule } from '@nestjs/testing';
 import { getRepositoryToken } from '@nestjs/typeorm';
 import * as bcrypt from 'bcrypt';
-import { IAUTHENTICATION_SERVICE } from '../constants/services.constant';
+import { UsersServiceProvider } from '../users/users.module';
 import * as request from 'supertest';
 import { SqliteErrorsEnum } from '../enums/sqlite-errors.enum';
 import { User } from '../users/entities/user.entity';
 import { userRepositoryMock } from '../users/mocks/user.repository.mock';
-import { UsersService } from '../users/users.service';
 import { AuthenticationController } from './authentication.controller';
-import { AuthenticationService } from './authentication.service';
+import { AuthenticationServiceProviders } from './authentication.module';
 import { jwtServiceMock } from './mocks/jwt.service.mock';
 import { LocalStrategy } from './strategies/local.strategy';
 
@@ -26,11 +25,8 @@ describe('Given AuthenticationController', () => {
     const module: TestingModule = await Test.createTestingModule({
       controllers: [AuthenticationController],
       providers: [
-        {
-          provide: IAUTHENTICATION_SERVICE,
-          useClass: AuthenticationService,
-        },
-        UsersService,
+        AuthenticationServiceProviders,
+        UsersServiceProvider,
         LocalStrategy,
         {
           provide: getRepositoryToken(User),

@@ -1,13 +1,13 @@
-import { Param, UseGuards } from '@nestjs/common';
-import { Get } from '@nestjs/common';
-import { Controller } from '@nestjs/common';
+import { Controller, Get, Inject, Param, UseGuards } from '@nestjs/common';
+import { ICharactersService } from '../characters/interfaces/icharacters.service';
 import { JwtAuthenticationGuard } from '../authentication/guards/jwt-authentication.guard';
-import { CharactersService } from '../characters/characters.service';
+import { ICHARACTERS_SERVICE } from '../constants/services.constant';
 
 @Controller('users')
 @UseGuards(JwtAuthenticationGuard)
 export class UsersController {
-  constructor(private charactersService: CharactersService) { }
+  constructor(
+    @Inject(ICHARACTERS_SERVICE) private charactersService: ICharactersService) { }
 
   @Get(':id/characters')
   findAllByUserId(@Param('id') userId: string) {

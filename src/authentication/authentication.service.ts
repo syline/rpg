@@ -1,17 +1,18 @@
-import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
+import { HttpException, HttpStatus, Inject, Injectable } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import * as bcrypt from 'bcrypt';
+import { IUSERS_SERVICE } from '../constants/services.constant';
+import { IUsersService } from '../users/interfaces/iuser.service';
 import { SqliteErrorsEnum } from '../enums/sqlite-errors.enum';
 import { CreateUserDto } from '../users/dto/create-user.dto';
 import { User } from '../users/entities/user.entity';
-import { UsersService } from '../users/users.service';
 import { AccessTokenDto } from './dto/accessToken.dto';
 import { IAuthenticationService } from './interfaces/iauthentication.service';
 
 @Injectable()
 export class AuthenticationService implements IAuthenticationService {
   constructor(
-    private usersService: UsersService,
+    @Inject(IUSERS_SERVICE) private usersService: IUsersService,
     private jwtService: JwtService,
   ) { }
 

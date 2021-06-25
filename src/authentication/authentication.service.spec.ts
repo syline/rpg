@@ -1,10 +1,10 @@
 import { JwtService } from '@nestjs/jwt';
 import { Test, TestingModule } from '@nestjs/testing';
 import * as bcrypt from 'bcrypt';
-import { IAUTHENTICATION_SERVICE } from '../constants/services.constant';
+import { IAUTHENTICATION_SERVICE, IUSERS_SERVICE } from '../constants/services.constant';
 import { User } from '../users/entities/user.entity';
 import { usersServiceMock } from '../users/mocks/users.service.mock';
-import { UsersService } from '../users/users.service';
+import { AuthenticationServiceProviders } from './authentication.module';
 import { AuthenticationService } from './authentication.service';
 import { AccessTokenDto } from './dto/accessToken.dto';
 import { jwtServiceMock } from './mocks/jwt.service.mock';
@@ -16,12 +16,9 @@ describe('Given AuthenticationService', () => {
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
       providers: [
+        AuthenticationServiceProviders,
         {
-          provide: IAUTHENTICATION_SERVICE,
-          useClass: AuthenticationService,
-        },
-        {
-          provide: UsersService,
+          provide: IUSERS_SERVICE,
           useValue: usersServiceMock,
         },
         {
