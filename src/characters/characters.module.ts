@@ -1,4 +1,4 @@
-import { Module, Provider } from '@nestjs/common';
+import { forwardRef, Module, Provider } from '@nestjs/common';
 import { CharactersService } from './characters.service';
 import { CharactersController } from './characters.controller';
 import { TypeOrmModule } from '@nestjs/typeorm';
@@ -14,7 +14,7 @@ export const CharacterServiceProvider: Provider = {
 @Module({
   imports: [
     TypeOrmModule.forFeature([Character]),
-    FightsModule,
+    forwardRef(() => FightsModule),
   ],
   controllers: [
     CharactersController,

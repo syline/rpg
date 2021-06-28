@@ -248,7 +248,7 @@ describe('Given CharactersController', () => {
 
   describe('When user is logged-in and get character`s fights', () => {
     let response;
-    const fights = [new Fight()];
+    const fights = [new Fight(1, 2, 1)];
     beforeEach(async () => {
       fightsRepositoryMock.find.mockReturnValue(Promise.resolve(fights));
       response = await request(app.getHttpServer())

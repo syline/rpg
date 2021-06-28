@@ -16,9 +16,14 @@ export class Fight {
   character2: Character;
 
   @Column()
-  character1Score: number;
+  winnerId: number;
 
-  @Column()
-  character2Score: number;
+  constructor(idCharacter1: number, idCharacter2: number, winnerId: number) {
+    this.character1 = new Character();
+    this.character1.id = idCharacter1;
+    this.character2 = new Character();
+    this.character2.id = idCharacter2;
+    this.winnerId = winnerId;
+  }
 
 }

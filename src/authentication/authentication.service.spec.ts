@@ -1,6 +1,7 @@
 import { JwtService } from '@nestjs/jwt';
 import { Test, TestingModule } from '@nestjs/testing';
 import * as bcrypt from 'bcrypt';
+import { SqliteErrorsEnum } from '../enums/sqlite-errors.enum';
 import { IAUTHENTICATION_SERVICE, IUSERS_SERVICE } from '../constants/services.constant';
 import { User } from '../users/entities/user.entity';
 import { usersServiceMock } from '../users/mocks/users.service.mock';
@@ -55,7 +56,7 @@ describe('Given AuthenticationService', () => {
 
   describe('When register a user with an existing login', () => {
     beforeEach(() => {
-      usersServiceMock.create.mockRejectedValue(new Error('toto'))
+      usersServiceMock.create.mockRejectedValue({ code: SqliteErrorsEnum.constraint });
     });
 
     it('Then an exception is thrown', async () => {
