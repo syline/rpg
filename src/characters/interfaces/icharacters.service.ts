@@ -10,6 +10,8 @@ export interface ICharactersService {
 
   findOne(id: number): Promise<Character>;
 
+  getOpponent(characterId: number): Promise<Character>;
+
   update(id: number, updateCharacterDto: UpdateCharacterDto): Promise<UpdateResult>;
 
   remove(id: number);

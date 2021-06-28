@@ -2,10 +2,11 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { User } from '../users/entities/user.entity';
 import { Repository, UpdateResult } from 'typeorm';
-import { CreateCharacterDto } from './dto/create-character.dto';
-import { UpdateCharacterDto } from './dto/update-character.dto';
-import { Character } from './entities/character.entity';
-import { ICharactersService } from './interfaces/icharacters.service';
+import { CreateCharacterDto } from './dto/create-CHARACTER.dto';
+import { UpdateCharacterDto } from './dto/update-CHARACTER.dto';
+import { Character } from './entities/CHARACTER.entity';
+import { ICharactersService } from './interfaces/iCHARACTERs.service';
+import { getOpponentQuery } from './get-opponent-query';
 
 @Injectable()
 export class CharactersService implements ICharactersService {
@@ -33,5 +34,9 @@ export class CharactersService implements ICharactersService {
 
   async remove(id: number) {
     return await this.characterRepository.delete(id);
+  }
+
+  async getOpponent(characterId: number): Promise<Character> {
+    return await this.characterRepository.query(getOpponentQuery(characterId));
   }
 }

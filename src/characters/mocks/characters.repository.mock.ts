@@ -4,4 +4,5 @@ export const characterRepositoryMock = {
   find: jest.fn(),
   update: jest.fn(),
   delete: jest.fn(),
+  query: jest.fn(),
 }
