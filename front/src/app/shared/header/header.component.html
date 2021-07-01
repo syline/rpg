@@ -1,9 +1,4 @@
 <mat-toolbar>
   <span fxFlex>RPG</span>
-  <!-- <button mat-icon-button aria-label="Example icon-button with heart icon">
-    <mat-icon>favorite</mat-icon>
-  </button>
-  <button mat-icon-button aria-label="Example icon-button with share icon">
-    <mat-icon>share</mat-icon>
-  </button> -->
+  <button class="create-account" *ngIf="!isLoggedIn()" mat-raised-button color="primary" (click)="createAccount()">Créer un compte</button>
 </mat-toolbar>

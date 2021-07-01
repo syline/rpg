@@ -1,9 +1,13 @@
-import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { HeaderComponent } from './header.component';
-import { MatToolbarModule } from '@angular/material/toolbar';
-import { MatIconModule } from '@angular/material/icon';
+import { NgModule } from '@angular/core';
 import { FlexLayoutModule } from '@angular/flex-layout';
+import { ReactiveFormsModule } from '@angular/forms';
+import { MatButtonModule } from '@angular/material/button';
+import { MatDialogModule } from '@angular/material/dialog';
+import { MatToolbarModule } from '@angular/material/toolbar';
+import { LoginPasswordModule } from '../components/login-password/login-password.module';
+import { CreateAccountDialogModule } from './create-account-dialog/create-account-dialog.module';
+import { HeaderComponent } from './header.component';
 
 @NgModule({
   declarations: [HeaderComponent],
@@ -11,8 +15,13 @@ import { FlexLayoutModule } from '@angular/flex-layout';
   imports: [
     CommonModule,
     MatToolbarModule,
-    MatIconModule,
     FlexLayoutModule,
+    MatDialogModule,
+    MatButtonModule,
+    LoginPasswordModule,
+    ReactiveFormsModule,
+
+    CreateAccountDialogModule,
   ]
 })
 export class HeaderModule { }

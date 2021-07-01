@@ -1,15 +1,24 @@
-import { Component, OnInit } from '@angular/core';
+import { Component } from '@angular/core';
+import { MatDialog } from '@angular/material/dialog';
+import { AuthenticationService } from 'src/app/core/services/authentication.service';
+import { CreateAccountDialogComponent } from 'src/app/shared/header/create-account-dialog/create-account-dialog.component';
 
 @Component({
   selector: 'app-header',
   templateUrl: './header.component.html',
-  styleUrls: ['./header.component.scss']
 })
-export class HeaderComponent implements OnInit {
+export class HeaderComponent {
 
-  constructor() { }
+  constructor(
+    private dialogService: MatDialog,
+    private authService: AuthenticationService,
+  ) { }
 
-  ngOnInit(): void {
+  createAccount(): void {
+    this.dialogService.open(CreateAccountDialogComponent);
   }
 
+  isLoggedIn(): boolean {
+    return this.authService.isLoggedIn();
+  }
 }
