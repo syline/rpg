@@ -1,3 +1,4 @@
 {
   "back/src/**/*.+(js|ts|tsx)": ["eslint"],
+  "front/src/**/*.+(js|ts|tsx)": ["eslint"],
 }

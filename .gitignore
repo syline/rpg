@@ -1,6 +1,10 @@
 # compiled output
 /dist
 /node_modules
+back/dist
+back/node_modules
+front/dist
+front/node_modules
 
 # Logs
 logs
@@ -14,7 +18,7 @@ lerna-debug.log*
 .DS_Store
 
 # Tests
-/coverage
+back/coverage
 /.nyc_output
 
 # IDEs and editors
