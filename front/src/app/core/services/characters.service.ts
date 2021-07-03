@@ -39,4 +39,8 @@ export class CharactersService {
   update(characterId: number, character: UpdateCharacterDto): Observable<Character> {
     return this.httpClient.patch<Character>(`${environment.apiUrl}/characters/${characterId}`, character);
   }
+
+  delete(characterId: number): Observable<void> {
+    return this.httpClient.delete<void>(`${environment.apiUrl}/characters/${characterId}`);
+  }
 }
