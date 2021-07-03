@@ -7,7 +7,7 @@ import { User } from '../users/entities/user.entity';
 import { usersServiceMock } from '../users/mocks/users.service.mock';
 import { AuthenticationServiceProviders } from './authentication.module';
 import { AuthenticationService } from './authentication.service';
-import { AccessTokenDto } from './dto/accessToken.dto';
+import { UserDto } from './dto/user.dto';
 import { jwtServiceMock } from './mocks/jwt.service.mock';
 
 describe('Given AuthenticationService', () => {
@@ -100,15 +100,19 @@ describe('Given AuthenticationService', () => {
   });
 
   describe('When user log in', () => {
-    let accessToken: AccessTokenDto;
+    let user: UserDto;
 
     beforeEach(async () => {
-      jwtServiceMock.sign.mockReturnValue({ accessToken: '' });
-      accessToken = await service.login(new User({ }));
+      jwtServiceMock.sign.mockReturnValue('token');
+      user = await service.login(new User({ id: 1, login: 'login', password: 'password' }));
     });
 
-    it('Then access token is retrieved', () => {
-      expect(accessToken.accessToken).toBeDefined();
+    it('Then a user is retrieved with id, login and access token', () => {
+      expect(user).toEqual({
+        id: 1,
+        login: 'login',
+        accessToken: 'token',
+      })
     });
   })
 });

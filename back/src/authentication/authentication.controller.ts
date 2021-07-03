@@ -2,7 +2,7 @@ import { Body, ClassSerializerInterceptor, Controller, HttpCode, Inject, Post, R
 import { IAUTHENTICATION_SERVICE } from '../constants/services.constant';
 import { CreateUserDto } from '../users/dto/create-user.dto';
 import { User } from '../users/entities/user.entity';
-import { AccessTokenDto } from './dto/accessToken.dto';
+import { UserDto } from './dto/user.dto';
 import { LocalAuthenticationGuard } from './guards/local-authentication.guard';
 import { IAuthenticationService } from './interfaces/iauthentication.service';
 import { RequestWithUser } from './interfaces/request-with-user.interface';
@@ -25,7 +25,7 @@ export class AuthenticationController {
   @UseGuards(LocalAuthenticationGuard)
   @UseInterceptors(ClassSerializerInterceptor)
   @Post('login')
-  async login(@Req() request: RequestWithUser): Promise<AccessTokenDto> {
+  async login(@Req() request: RequestWithUser): Promise<UserDto> {
     return this.authenticationService.login(request.user);
   }
 }

@@ -6,8 +6,8 @@ import { IUsersService } from '../users/interfaces/iuser.service';
 import { SqliteErrorsEnum } from '../enums/sqlite-errors.enum';
 import { CreateUserDto } from '../users/dto/create-user.dto';
 import { User } from '../users/entities/user.entity';
-import { AccessTokenDto } from './dto/accessToken.dto';
 import { IAuthenticationService } from './interfaces/iauthentication.service';
+import { UserDto } from './dto/user.dto';
 
 @Injectable()
 export class AuthenticationService implements IAuthenticationService {
@@ -52,9 +52,11 @@ export class AuthenticationService implements IAuthenticationService {
     }
   }
 
-  async login(user: User): Promise<AccessTokenDto> {
+  async login(user: User): Promise<UserDto> {
     const payload = { username: user.login, sub: user.id };
     return {
+      id: user.id,
+      login: user.login,
       accessToken: this.jwtService.sign(payload),
     };
   }

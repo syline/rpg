@@ -1,7 +1,7 @@
 import { HttpClient } from '@angular/common/http';
 import { TestBed } from '@angular/core/testing';
 import { of } from 'rxjs';
-import { ACCESS_TOKEN, CURRENT_USER } from 'src/app/shared/constants/local-storage.constant';
+import { ACCESS_TOKEN, CURRENT_USER_ID, CURRENT_USER_LOGIN } from 'src/app/shared/constants/local-storage.constant';
 import { httpClientMockService } from 'src/app/shared/tests/services/http-client.mock.service';
 import { environment } from 'src/environments/environment';
 import { AuthenticationService } from './authentication.service';
@@ -43,11 +43,13 @@ describe('Given AuthenticationService', () => {
   });
 
   describe('When login is called', () => {
-    const data = { login: 'login', password: ''};
     const token = 'token';
+    const id = 1;
+    const login = 'login';
+    const data = { login, password: ''};
 
     beforeEach(() => {
-      httpClient.post = jasmine.createSpy('post').and.returnValue(of({ accessToken: token }));
+      httpClient.post = jasmine.createSpy('post').and.returnValue(of({ id, login, accessToken: token }));
       service.login(data).subscribe();
     });
 
@@ -59,8 +61,12 @@ describe('Given AuthenticationService', () => {
       expect(localStorage.getItem(ACCESS_TOKEN)).toEqual(token);
     });
 
-    it('Then localStorage has current user', () => {
-      expect(localStorage.getItem(CURRENT_USER)).toEqual('login');
+    it('Then localStorage has current user id', () => {
+      expect(localStorage.getItem(CURRENT_USER_ID)).toEqual(id.toString());
+    });
+
+    it('Then localStorage has current user id', () => {
+      expect(localStorage.getItem(CURRENT_USER_LOGIN)).toEqual(login);
     });
   });
 
@@ -91,16 +97,30 @@ describe('Given AuthenticationService', () => {
   });
 
   describe('When current user is Paul', () => {
-    const currentUser = 'Paul';
+    const currentUserLogin = 'Paul';
     let response;
 
     beforeEach(() => {
-      localStorage.setItem(CURRENT_USER, currentUser);
-      response = service.getCurrentUser();
+      localStorage.setItem(CURRENT_USER_LOGIN, currentUserLogin);
+      response = service.getCurrentUserLogin();
     });
 
-    it('Then getCurrentUser should retrieve Paul', () => {
-      expect(response).toEqual(currentUser);
+    it('Then getCurrentUserLogin should retrieve Paul', () => {
+      expect(response).toEqual(currentUserLogin);
+    });
+  });
+
+  describe('When current user id is 1', () => {
+    const currentUserId = 1;
+    let response;
+
+    beforeEach(() => {
+      localStorage.setItem(CURRENT_USER_ID, currentUserId.toString());
+      response = service.getCurrentUserId();
+    });
+
+    it('Then getCurrentUserId should retrieve 1', () => {
+      expect(response).toEqual(currentUserId.toString());
     });
   });
 

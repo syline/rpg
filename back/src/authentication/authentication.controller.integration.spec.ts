@@ -113,7 +113,7 @@ describe('Given AuthenticationController', () => {
     });
 
     it('Then it should retreive access token', () => {
-      expect(response.body).toEqual({ accessToken: '' });
+      expect(response.body).toEqual({ id: 1, login: 'test', accessToken: '' });
     });
   })
 });
