@@ -1,9 +1,10 @@
-import { Body, Controller, Delete, Get, Inject, Param, Patch, Post, UseGuards } from '@nestjs/common';
-import { Fight } from '../fights/entities/fight.entity';
-import { IFightsService } from '../fights/interfaces/ifights.service';
+import { Body, Controller, Delete, Get, HttpException, HttpStatus, Inject, Param, Patch, Post, UseGuards } from '@nestjs/common';
+import { MaxNbCharacterError } from 'src/shared/errors/max-nb-character.error';
 import { DeleteResult, UpdateResult } from 'typeorm';
 import { JwtAuthenticationGuard } from '../authentication/guards/jwt-authentication.guard';
 import { ICHARACTERS_SERVICE, IFIGHTS_SERVICE } from '../constants/services.constant';
+import { Fight } from '../fights/entities/fight.entity';
+import { IFightsService } from '../fights/interfaces/ifights.service';
 import { CreateCharacterDto } from './dto/create-character.dto';
 import { UpdateCharacterDto } from './dto/update-character.dto';
 import { Character } from './entities/character.entity';
@@ -15,11 +16,18 @@ export class CharactersController {
   constructor(
     @Inject(ICHARACTERS_SERVICE) private readonly charactersService: ICharactersService,
     @Inject(IFIGHTS_SERVICE) private readonly fightsService: IFightsService,
-  ) {}
+  ) { }
 
   @Post()
-  create(@Body() createCharacterDto: CreateCharacterDto): Promise<Character> {
-    return this.charactersService.create(createCharacterDto);
+  create(@Body() createCharacterDto: CreateCharacterDto): Promise<Character | void> {
+    return this.charactersService.create(createCharacterDto)
+      .catch((err) => {
+        if (err instanceof MaxNbCharacterError) {
+          throw new HttpException(err.message, HttpStatus.NOT_ACCEPTABLE);
+        } else {
+          throw new HttpException('Une erreur est survenue', HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+      });
   }
 
   @Get(':id/opponent')

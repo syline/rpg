@@ -1,0 +1,16 @@
+<h1>Ajouter un personnage</h1>
+
+<form fxLayout="column">
+  <mat-form-field>
+    <mat-label>Nom</mat-label>
+    <input type="text" matInput [formControl]="name">
+    <mat-error *ngIf="name.hasError('required')">
+      Champs obligatoire
+    </mat-error>
+  </mat-form-field>
+
+  <div fxLayout="row" fxLayoutAlign="space-between">
+    <button mat-raised-button color="primary" mat-dialog-close>Annuler</button>
+    <button mat-raised-button color="accent" (click)="add()">Créer</button>
+  </div>
+</form>

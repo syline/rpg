@@ -7,6 +7,7 @@ import { UpdateCharacterDto } from './dto/update-CHARACTER.dto';
 import { Character } from './entities/CHARACTER.entity';
 import { ICharactersService } from './interfaces/iCHARACTERs.service';
 import { getOpponentQuery } from './get-opponent-query';
+import { MaxNbCharacterError } from 'src/shared/errors/max-nb-character.error';
 
 @Injectable()
 export class CharactersService implements ICharactersService {
@@ -16,7 +17,16 @@ export class CharactersService implements ICharactersService {
   ) { }
   
   async create(createCharacterDto: CreateCharacterDto): Promise<Character> {
-    return await this.characterRepository.save(createCharacterDto);
+    const characters = await this.findAllByUserId(createCharacterDto.userId);
+    if (characters.length > 9) {
+      throw new MaxNbCharacterError();
+    }
+
+    const character = new Character();
+    character.name = createCharacterDto.name;
+    character.user = new User({ id: createCharacterDto.userId });
+    
+    return await this.characterRepository.save(character);
   }
 
   async findAllByUserId(userId: number): Promise<Character[]> {

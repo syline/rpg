@@ -1,5 +1,9 @@
 <div fxLayout="column">
-  <h1>Mes personnages</h1>
+  <div fxLayout="row" fxLayoutAlign="space-between">
+    <h1>Mes personnages</h1>
+
+    <button *ngIf="canCreateCharacter()" mat-raised-button color="accent" (click)="addCharacter()">Ajouter un personnage</button>
+  </div>
 
   <table mat-table [dataSource]="dataSource" fxFlex>
     <ng-container matColumnDef="name">
