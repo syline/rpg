@@ -14,5 +14,7 @@ export interface ICharactersService {
 
   update(id: number, updateCharacterDto: UpdateCharacterDto): Promise<UpdateResult>;
 
+  forwardSkillsToCharacter(characterId: number, updateCharacterDto: UpdateCharacterDto): Promise<Character>;
+
   remove(id: number);
 }

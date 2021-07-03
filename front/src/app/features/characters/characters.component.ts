@@ -12,7 +12,7 @@ import { CreateCharacterComponent } from './create-character/create-character.co
   styleUrls: ['./characters.component.scss']
 })
 export class CharactersComponent implements OnInit {
-  displayedColumns: string[] = ['name', 'health', 'attack', 'defense', 'magik', 'rank', 'skills', 'free'];
+  displayedColumns: string[] = ['name', 'health', 'attack', 'defense', 'magik', 'rank', 'skills', 'free', 'update'];
   dataSource: MatTableDataSource<Character>;
 
   constructor(

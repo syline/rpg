@@ -8,6 +8,8 @@ import { Character } from './entities/CHARACTER.entity';
 import { ICharactersService } from './interfaces/iCHARACTERs.service';
 import { getOpponentQuery } from './get-opponent-query';
 import { MaxNbCharacterError } from 'src/shared/errors/max-nb-character.error';
+import { LevelUpError } from 'src/shared/errors/level-up.error';
+import { CharacteristicsEnum } from 'src/enums/characteristics.enum';
 
 @Injectable()
 export class CharactersService implements ICharactersService {
@@ -38,8 +40,44 @@ export class CharactersService implements ICharactersService {
     return await this.characterRepository.findOne({ id });
   }
 
-  async update(id: number, updateCharacterDto: UpdateCharacterDto): Promise<UpdateResult> {
-    return await this.characterRepository.update(id, updateCharacterDto);
+  async update(id: number, character: Character): Promise<UpdateResult> {
+    return await this.characterRepository.update(id, character);
+  }
+
+  async forwardSkillsToCharacter(characterId: number, updateCharacterDto: UpdateCharacterDto): Promise<Character> {
+    const character = await this.findOne(characterId);
+
+    this.forwardSkills(character, updateCharacterDto, CharacteristicsEnum.attack);
+    this.forwardSkills(character, updateCharacterDto, CharacteristicsEnum.defense);
+    this.forwardSkills(character, updateCharacterDto, CharacteristicsEnum.magik);
+    this.forwardHealth(character, updateCharacterDto);
+    
+    if (character.skills < 0) {
+      throw new LevelUpError();
+    }
+
+    return character;
+  } 
+
+  private forwardSkills(
+    characterToUpdate: Character, 
+    updateCharacterDto: UpdateCharacterDto, 
+    characteristic: CharacteristicsEnum,
+  ): void {
+    while(updateCharacterDto[characteristic] > 0) {
+      const cost = Math.ceil(characterToUpdate[characteristic] / 5);
+      characterToUpdate.skills -= cost;
+      characterToUpdate[characteristic]++;
+      updateCharacterDto[characteristic]--;
+    }
+  }
+
+  private forwardHealth(
+    characterToUpdate: Character, 
+    updateCharacterDto: UpdateCharacterDto, 
+  ): void {
+    characterToUpdate.skills -= updateCharacterDto.health;
+    characterToUpdate.health += updateCharacterDto.health;
   }
 
   async remove(id: number) {

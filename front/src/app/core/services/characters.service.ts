@@ -4,6 +4,7 @@ import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { CharacterDto } from 'src/app/shared/dto/character.dto';
 import { CreateCharacterDto } from 'src/app/shared/dto/create-character.dto';
+import { UpdateCharacterDto } from 'src/app/shared/dto/update-character.dto';
 import { Character } from 'src/app/shared/models/character';
 import { environment } from 'src/environments/environment';
 import { AuthenticationService } from './authentication.service';
@@ -27,5 +28,15 @@ export class CharactersService {
   create(name: string): Observable<Character> {
     const character = new CreateCharacterDto(name, +this.authService.getCurrentUserId());
     return this.httpClient.post<Character>(`${environment.apiUrl}/characters`, character);
+  }
+
+  getById(id: number): Observable<Character> {
+    return this.httpClient.get<CharacterDto>(`${environment.apiUrl}/characters/${id}`).pipe(
+      map((character: CharacterDto) => new Character(character)),
+    );
+  }
+
+  update(characterId: number, character: UpdateCharacterDto): Observable<Character> {
+    return this.httpClient.patch<Character>(`${environment.apiUrl}/characters/${characterId}`, character);
   }
 }

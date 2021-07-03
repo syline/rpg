@@ -1,0 +1,93 @@
+<div fxLayout="column" fxLayoutGap="50px">
+  <h1>Mettre à jour les caractéristiques</h1>
+
+  <div fxLayout="column" class="points" fxLayoutGap="20px">
+    <div fxLayout="row" fxLayoutAlign="center center">
+      <span fxFlex="30">Points de compétences :</span>
+      <span fxFlex="30" fxLayoutAlign="center center">
+        <span>{{ newCharacter.skills }} point(s)</span>
+      </span>
+    </div>
+
+    <div fxLayout="row" fxLayoutAlign="center center">
+      <span fxFlex="30">Points de vie :</span>
+      <span fxFlex="30" fxLayoutAlign="space-between center">
+        <button mat-mini-fab color="accent" aria-label="remove health"
+          (click)="removePoint(characteristicsEnum.health)"
+          [disabled]="!canRemovePoint(characteristicsEnum.health)"
+        >
+          <mat-icon>remove_circle</mat-icon>
+        </button>
+        <span>{{ newCharacter.health }} point(s)</span>
+        <button mat-mini-fab color="primary" aria-label="add health"
+          (click)="addPoint(characteristicsEnum.health)"
+          [disabled]="!canAddPoint(characteristicsEnum.health)"
+        >
+          <mat-icon>add_circle</mat-icon>
+        </button>
+      </span>
+    </div>
+
+    <div fxLayout="row" fxLayoutAlign="center center">
+      <span fxFlex="30">Attaque :</span>
+      <span fxFlex="30" fxLayoutAlign="space-between center">
+        <button mat-mini-fab color="accent" aria-label="remove attack"
+          (click)="removePoint(characteristicsEnum.attack)"
+          [disabled]="!canRemovePoint(characteristicsEnum.attack)"
+        >
+          <mat-icon>remove_circle</mat-icon>
+        </button>
+        <span>{{ newCharacter.attack }} point(s)</span>
+        <button mat-mini-fab color="primary" aria-label="add attack"
+          (click)="addPoint(characteristicsEnum.attack)"
+          [disabled]="!canAddPoint(characteristicsEnum.attack)"
+        >
+          <mat-icon>add_circle</mat-icon>
+        </button>
+      </span>
+    </div>
+
+    <div fxLayout="row" fxLayoutAlign="center center">
+      <span fxFlex="30">Défense :</span>
+      <span fxFlex="30" fxLayoutAlign="space-between center">
+        <button mat-mini-fab color="accent" aria-label="remove defense"
+          (click)="removePoint(characteristicsEnum.defense)"
+          [disabled]="!canRemovePoint(characteristicsEnum.defense)"
+        >
+          <mat-icon>remove_circle</mat-icon>
+        </button>
+        <span>{{ newCharacter.defense }} point(s)</span>
+        <button mat-mini-fab color="primary" aria-label="add defense"
+          (click)="addPoint(characteristicsEnum.defense)"
+          [disabled]="!canAddPoint(characteristicsEnum.defense)"
+        >
+          <mat-icon>add_circle</mat-icon>
+        </button>
+      </span>
+    </div>
+
+    <div fxLayout="row" fxLayoutAlign="center center">
+      <span fxFlex="30">Magie :</span>
+      <span fxFlex="30" fxLayoutAlign="space-between center">
+        <button mat-mini-fab color="accent" aria-label="remove magik"
+          (click)="removePoint(characteristicsEnum.magik)"
+          [disabled]="!canRemovePoint(characteristicsEnum.magik)"
+        >
+          <mat-icon>remove_circle</mat-icon>
+        </button>
+        <span>{{ newCharacter.magik }} point(s)</span>
+        <button mat-mini-fab color="primary" aria-label="add magik"
+          (click)="addPoint(characteristicsEnum.magik)"
+          [disabled]="!canAddPoint(characteristicsEnum.magik)"
+        >
+          <mat-icon>add_circle</mat-icon>
+        </button>
+      </span>
+    </div>
+  </div>
+
+  <div fxLayout="row" class="actions" fxLayoutAlign="space-around">
+    <button mat-raised-button color="accent" (click)="reset()">Réinitialiser</button>
+    <button mat-raised-button color="primary" (click)="updateCharacter()">Valider</button>
+  </div>
+</div>

@@ -1,15 +1,14 @@
 import { Inject, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
+import { Repository } from 'typeorm';
+import { Character } from '../characters/entities/character.entity';
 import { ICharactersService } from '../characters/interfaces/icharacters.service';
 import { ICHARACTERS_SERVICE } from '../constants/services.constant';
-import { Repository } from 'typeorm';
 import { ChallengersDto } from './dto/fight.dto';
 import { Fight } from './entities/fight.entity';
 import { IFightResult } from './interfaces/ifight-result';
 import { IFightsService } from './interfaces/ifights.service';
 import { IRound } from './interfaces/iround';
-import { Character } from '../characters/entities/character.entity';
-import { UpdateCharacterDto } from '../characters/dto/update-character.dto';
 
 @Injectable()
 export class FightsService implements IFightsService {
@@ -42,8 +41,8 @@ export class FightsService implements IFightsService {
     const fight = new Fight(character1.id, character2.id, fightResults.winner.id);
 
     await Promise.all([
-      this.charactersService.update(character1.id, new UpdateCharacterDto(character1)),
-      this.charactersService.update(character2.id, new UpdateCharacterDto(character2)),
+      this.charactersService.update(character1.id, character1),
+      this.charactersService.update(character2.id, character2),
       this.fightRepository.save(fight),
     ])
 

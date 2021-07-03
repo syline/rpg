@@ -1,4 +1,5 @@
 import { Body, Controller, Delete, Get, HttpException, HttpStatus, Inject, Param, Patch, Post, UseGuards } from '@nestjs/common';
+import { LevelUpError } from 'src/shared/errors/level-up.error';
 import { MaxNbCharacterError } from 'src/shared/errors/max-nb-character.error';
 import { DeleteResult, UpdateResult } from 'typeorm';
 import { JwtAuthenticationGuard } from '../authentication/guards/jwt-authentication.guard';
@@ -46,8 +47,18 @@ export class CharactersController {
   }
 
   @Patch(':id')
-  update(@Param('id') id: string, @Body() updateCharacterDto: UpdateCharacterDto): Promise<UpdateResult> {
-    return this.charactersService.update(+id, updateCharacterDto);
+  async update(@Param('id') id: string, @Body() updateCharacterDto: UpdateCharacterDto): Promise<UpdateResult> {
+    return this.charactersService.forwardSkillsToCharacter(+id, updateCharacterDto)
+      .then((characterToUpdate: Character) => {
+        return this.charactersService.update(+id, characterToUpdate);
+      })
+      .catch((err) => {
+        if (err instanceof LevelUpError) {
+          throw new HttpException(err.message, HttpStatus.NOT_ACCEPTABLE);
+        } else {
+          throw new HttpException('Une erreur est survenue', HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+      });
   }
 
   @Delete(':id')
