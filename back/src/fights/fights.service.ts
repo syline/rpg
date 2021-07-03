@@ -1,5 +1,6 @@
 import { Inject, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
+import { NoFightError } from 'src/shared/errors/no-fight.error';
 import { Repository } from 'typeorm';
 import { Character } from '../characters/entities/character.entity';
 import { ICharactersService } from '../characters/interfaces/icharacters.service';
@@ -30,6 +31,10 @@ export class FightsService implements IFightsService {
 
   async fights(challengersId: ChallengersDto): Promise<IRound[]> {
     const [character1, character2] = await this.getChallengers(challengersId);
+
+    if (character1.attack === 0 && character2.attack === 0) {
+      throw new NoFightError();
+    }
 
     const rounds = this.launchFight(character1, character2);
 
