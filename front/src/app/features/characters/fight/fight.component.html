@@ -13,9 +13,9 @@
 <div fxLayout="row" fxLayoutAlign="center center" fxLayoutGap="50px">
   <app-fighter fxFlex="20" [fighter]="attacker" urlImg="../../../assets/attacker.png" [winner]="winner"></app-fighter>
 
-  <p class="vs">VS</p>
+  <p class="vs" *ngIf="defender.id">VS</p>
 
-  <app-fighter fxFlex="20" [fighter]="defender" urlImg="../../../assets/defender.png" [winner]="winner"></app-fighter>
+  <app-fighter *ngIf="defender.id" fxFlex="20" [fighter]="defender" urlImg="../../../assets/defender.png" [winner]="winner"></app-fighter>
 </div>
 
 <div *ngFor="let round of rounds" fxLayout="column" fxLayoutAlign="center center">
