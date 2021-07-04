@@ -1,15 +1,16 @@
 import { Inject, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { NoFightError } from 'src/shared/errors/no-fight.error';
+import { Character } from 'src/characters/entities/character.entity';
 import { Repository } from 'typeorm';
-import { Character } from '../characters/entities/character.entity';
 import { ICharactersService } from '../characters/interfaces/icharacters.service';
 import { ICHARACTERS_SERVICE } from '../constants/services.constant';
-import { ChallengersDto } from './dto/fight.dto';
+import { NoFightError } from '../shared/errors/no-fight.error';
 import { Fight } from './entities/fight.entity';
+import { IChallengers } from './interfaces/ichallengers';
 import { IFightResult } from './interfaces/ifight-result';
 import { IFightsService } from './interfaces/ifights.service';
 import { IRound } from './interfaces/iround';
+import { Dice } from './models/dice';
 
 @Injectable()
 export class FightsService implements IFightsService {
@@ -29,51 +30,52 @@ export class FightsService implements IFightsService {
     })
   }
 
-  async fights(challengersId: ChallengersDto): Promise<IRound[]> {
-    const [character1, character2] = await this.getChallengers(challengersId);
+  async fights(attackerId: number, defenderId: number): Promise<IRound[]> {
+    const { attacker, defender } = await this.getTwoChallengers(attackerId, defenderId);
 
-    if (character1.attack === 0 && character2.attack === 0) {
+    if (attacker.isHarmless() && defender.isHarmless()) {
       throw new NoFightError();
     }
 
-    const rounds = this.launchFight(character1, character2);
+    const rounds = this.launchFight(attacker, defender);
 
-    const fightResults = this.determineWinnerAndLooser(character1, character2);
+    const fightResults = this.determineWinnerAndLooser(attacker, defender);
 
     this.upgradeWinner(fightResults.winner);
     this.downgradeLooser(fightResults.looser);
 
-    const fight = new Fight(character1.id, character2.id, fightResults.winner.id);
+    const fight = new Fight(attacker, defender, fightResults.winner.id);
 
     await Promise.all([
-      this.charactersService.update(character1.id, character1),
-      this.charactersService.update(character2.id, character2),
+      this.charactersService.update(attacker.id, attacker),
+      this.charactersService.update(defender.id, defender),
       this.fightRepository.save(fight),
     ])
 
     return rounds;
   }
 
-  private async getChallengers(challengersId: ChallengersDto): Promise<Character[]> {
-    return await Promise.all([
-      this.charactersService.findOne(challengersId.attackerId),
-      this.charactersService.findOne(challengersId.defenderId),
-    ])
+  private async getTwoChallengers(attackerId: number, defenderId: number): Promise<IChallengers> {
+    return {
+      attacker: await this.charactersService.findOne(attackerId), 
+      defender: await this.charactersService.findOne(defenderId), 
+    };
   }
 
-  private launchFight(character1: Character, character2: Character): IRound[] {
+  private launchFight(attacker: Character, defender: Character): IRound[] {
     const rounds: IRound[] = [];
     let nbRound = 1;
 
-    while (character1.health > 0 && character2.health > 0) {
-      const defenderDamagesReceived = this.attack(character1, character2);
+    while (attacker.isAlive() && defender.isAlive()) {
 
-      if (character2.health < 1) {
+      const defenderDamagesReceived = this.attack(attacker, defender);
+
+      if (!defender.isAlive()) {
         rounds.push({ id: nbRound, defenderDamagesReceived, attackerDamagesReceived: 0 });
         break;
       }
 
-      const attackerDamagesReceived = this.attack(character2, character1);
+      const attackerDamagesReceived = this.attack(defender, attacker);
 
       rounds.push({ id: nbRound, defenderDamagesReceived, attackerDamagesReceived });
 
@@ -84,7 +86,7 @@ export class FightsService implements IFightsService {
   }
 
   private attack(attacker: Character, defender: Character): number {
-    const attackValue = this.getDiceValue(attacker.attack);
+    const attackValue = new Dice(attacker.attack).getValue();
 
     let damages = this.getAttackDamages(attackValue, defender.defense);
 
@@ -96,14 +98,6 @@ export class FightsService implements IFightsService {
     return damages;
   }
 
-  private getDiceValue(max): number {
-    if (max === 0) {
-      return 0;
-    }
-
-    return Math.floor(Math.random() * max + 1);
-  }
-
   private getAttackDamages(attackValue: number, defenseValue: number): number {
     if (attackValue > defenseValue) {
       return attackValue - defenseValue;
@@ -111,15 +105,15 @@ export class FightsService implements IFightsService {
     return 0;
   }
 
-  private determineWinnerAndLooser(character1: Character, character2: Character): IFightResult {
+  private determineWinnerAndLooser(attacker: Character, defender: Character): IFightResult {
     const result = {
-      winner: character1,
-      looser: character2,
+      winner: attacker,
+      looser: defender,
     };
 
-    if (character2.health > 0) {
-      result.winner = character2;
-      result.looser = character1;
+    if (defender.isAlive()) {
+      result.winner = defender;
+      result.looser = attacker;
     }
 
     return result;

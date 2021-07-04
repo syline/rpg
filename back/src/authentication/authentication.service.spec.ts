@@ -1,14 +1,16 @@
 import { JwtService } from '@nestjs/jwt';
 import { Test, TestingModule } from '@nestjs/testing';
 import * as bcrypt from 'bcrypt';
-import { SqliteErrorsEnum } from '../enums/sqlite-errors.enum';
-import { IAUTHENTICATION_SERVICE, IUSERS_SERVICE } from '../constants/services.constant';
 import { User } from '../users/entities/user.entity';
+import { IAUTHENTICATION_SERVICE, IUSERS_SERVICE } from '../constants/services.constant';
+import { SqliteErrorsEnum } from '../enums/sqlite-errors.enum';
 import { usersServiceMock } from '../users/mocks/users.service.mock';
 import { AuthenticationServiceProviders } from './authentication.module';
 import { AuthenticationService } from './authentication.service';
 import { UserDto } from './dto/user.dto';
 import { jwtServiceMock } from './mocks/jwt.service.mock';
+import { LoginAlreadyExistError } from '../shared/errors/login-already-exist.error';
+import { CredentialsError } from '../shared/errors/credentials.error';
 
 describe('Given AuthenticationService', () => {
   let service: AuthenticationService;
@@ -46,7 +48,7 @@ describe('Given AuthenticationService', () => {
 
     beforeEach(async () => {
       usersServiceMock.create.mockReturnValue(Promise.resolve(user));
-      createdUser = await service.register(createUserData);
+      createdUser = await service.register(createUserData.login, createUserData.password);
     });
 
     it('Then new user is returned', () => {
@@ -60,7 +62,7 @@ describe('Given AuthenticationService', () => {
     });
 
     it('Then an exception is thrown', async () => {
-      await expect(service.register(createUserData)).rejects.toThrow();
+      await expect(() => service.register(createUserData.login, createUserData.password)).rejects.toThrow(LoginAlreadyExistError);
     });
   });
 
@@ -84,7 +86,7 @@ describe('Given AuthenticationService', () => {
     });
 
     it('Then an exception is thrown', async () => {
-      await expect(service.getAuthenticatedUser('test', 'test')).rejects.toThrow();
+      await expect(service.getAuthenticatedUser('test', 'test')).rejects.toThrow(CredentialsError);
     });
   });
 
@@ -95,7 +97,7 @@ describe('Given AuthenticationService', () => {
     });
 
     it('Then an exception is thrown', async () => {
-      await expect(service.getAuthenticatedUser('test', 'test')).rejects.toThrow();
+      await expect(service.getAuthenticatedUser('test', 'test')).rejects.toThrow(CredentialsError);
     });
   });
 

@@ -1,4 +1,4 @@
-import { INestApplication } from '@nestjs/common';
+import { HttpStatus, INestApplication } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { Test, TestingModule } from '@nestjs/testing';
 import { getRepositoryToken } from '@nestjs/typeorm';
@@ -55,7 +55,7 @@ describe('Given AuthenticationController', () => {
     });
 
     it('Then response status code = 201', () => {
-      expect(response.statusCode).toEqual(201);
+      expect(response.statusCode).toEqual(HttpStatus.CREATED);
     });
 
     it('Then it should respond with user\'s data without the password', () => {
@@ -73,8 +73,8 @@ describe('Given AuthenticationController', () => {
       .send(createUserData);
     });
 
-    it('Then it should throw an error (status code = 400)', () => {
-      expect(response.statusCode).toEqual(400);
+    it('Then it should throw an error', () => {
+      expect(response.statusCode).toEqual(HttpStatus.CONFLICT);
     })
   })
 
@@ -89,8 +89,8 @@ describe('Given AuthenticationController', () => {
       .send(createUserData);
     });
 
-    it('Then it should throw an error (500)', () => {
-      expect(response.statusCode).toEqual(500);
+    it('Then it should throw an error', () => {
+      expect(response.statusCode).toEqual(HttpStatus.INTERNAL_SERVER_ERROR);
     })
   })
 
@@ -109,7 +109,7 @@ describe('Given AuthenticationController', () => {
     });
 
     it('Then response status code = 200', () => {
-      expect(response.statusCode).toEqual(200);
+      expect(response.statusCode).toEqual(HttpStatus.OK);
     });
 
     it('Then it should retreive access token', () => {

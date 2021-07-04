@@ -1,13 +1,14 @@
-import { HttpException, HttpStatus, Inject, Injectable } from '@nestjs/common';
+import { Inject, Injectable } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import * as bcrypt from 'bcrypt';
+import { CredentialsError } from '../shared/errors/credentials.error';
+import { LoginAlreadyExistError } from '../shared/errors/login-already-exist.error';
 import { IUSERS_SERVICE } from '../constants/services.constant';
-import { IUsersService } from '../users/interfaces/iuser.service';
 import { SqliteErrorsEnum } from '../enums/sqlite-errors.enum';
-import { CreateUserDto } from '../users/dto/create-user.dto';
 import { User } from '../users/entities/user.entity';
-import { IAuthenticationService } from './interfaces/iauthentication.service';
+import { IUsersService } from '../users/interfaces/iuser.service';
 import { UserDto } from './dto/user.dto';
+import { IAuthenticationService } from './interfaces/iauthentication.service';
 
 @Injectable()
 export class AuthenticationService implements IAuthenticationService {
@@ -16,19 +17,17 @@ export class AuthenticationService implements IAuthenticationService {
     private jwtService: JwtService,
   ) { }
 
-  async register(createUserData: CreateUserDto): Promise<User> {
-    const hashedPassword = await bcrypt.hash(createUserData.password, 10);
+  async register(login: string, plainTextPassword: string): Promise<User> {
     try {
-      const createdUser = await this.usersService.create({
-        ...createUserData,
-        password: hashedPassword
-      });
+      const password = await bcrypt.hash(plainTextPassword, 10);
+      const createdUser = await this.usersService.create(new User({ login, password }));
+
       return new User(createdUser);
     } catch (error) {
       if (error?.code === SqliteErrorsEnum.constraint) {
-        throw new HttpException('Error : login already exists', HttpStatus.BAD_REQUEST);
+        throw new LoginAlreadyExistError();
       }
-      throw new HttpException('Error : something went wrong', HttpStatus.INTERNAL_SERVER_ERROR);
+      throw error;
     }
   }
 
@@ -36,9 +35,10 @@ export class AuthenticationService implements IAuthenticationService {
     try {
       const user = await this.usersService.getByLogin(login);
       await this.checkPassword(plainTextPassword, user.password);
+
       return new User(user);
     } catch (error) {
-      throw new HttpException('Wrong credentials provided', HttpStatus.BAD_REQUEST);
+      throw new CredentialsError();
     }
   }
    
@@ -48,7 +48,7 @@ export class AuthenticationService implements IAuthenticationService {
       hashedPassword
     );
     if (!isPasswordMatching) {
-      throw new HttpException('Wrong credentials provided', HttpStatus.BAD_REQUEST);
+      throw new CredentialsError();
     }
   }
 

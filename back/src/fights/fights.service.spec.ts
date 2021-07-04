@@ -11,6 +11,7 @@ import { FightsServiceProvider } from './fights.module';
 import { IFightsService } from './interfaces/ifights.service';
 import { IRound } from './interfaces/iround';
 import { fightsRepositoryMock } from './mocks/fights.repository.mock';
+import { NoFightError } from '../shared/errors/no-fight.error';
 
 describe('Given FightsService', () => {
   let service: IFightsService;
@@ -56,65 +57,87 @@ describe('Given FightsService', () => {
     it('Then repository.find is called with specific parameter', () => {
       expect(repository.find).toHaveBeenCalledWith({
         where: [
-          { character1: { id: 1 }},
-          { character2: { id: 1 }}
+          { attacker: { id: 1 } },
+          { defender: { id: 1 } }
         ],
-        relations: ['character1', 'character2']
+        relations: ['attacker', 'defender']
       })
     });
   });
 
-  describe(`
-    When challenger 1 (health = 12, attack = 10, defense = 3, magik = 4)
-    fight with challenger 2 (health = 12, attack = 8, defense = 4, magik = 3)
-    `, () => {
-      const character1 = new Character();
-      character1.health = 12;
-      character1.attack = 10;
-      character1.defense = 3;
-      character1.magik = 4;
+  describe('When character 1 fight against character 2', () => {
+    const attacker = new Character();
+    attacker.health = 12;
+    attacker.attack = 10;
+    attacker.defense = 3;
+    attacker.magik = 4;
 
-      const character2 = new Character();
-      character2.health = 12;
-      character2.attack = 8;
-      character2.defense = 4;
-      character2.magik = 3;
+    const defender = new Character();
+    defender.health = 12;
+    defender.attack = 8;
+    defender.defense = 4;
+    defender.magik = 3;
 
-      let rounds: IRound[];
-      beforeAll(async () => {
-        charactersServiceMock.findOne.mockImplementation((id) => {
-          if (id === 1) {
-            return Promise.resolve(character1);
-          }
-          return Promise.resolve(character2);
-        });
-        rounds = await service.fights({ character1Id: 1, character2Id: 2 });
-      });
-
-      it('Then charactersService.update is called twice', () => {
-        expect(charactersService.update).toHaveBeenCalledTimes(2);
-      });
-
-      it('Then fightRepository.save have been called', () => {
-        expect(fightsRepositoryMock.save).toHaveBeenCalled();
-      });
-      
-      it('Then we have all rounds passed', () => {
-        expect(rounds.length).toBeGreaterThan(0);
-      });
-
-      it('Then fight stop when one character is dead', () => {
-        let health1 = 12;
-        let health2 = 12;
-
-        let i = 0;
-        while (health1 > 0 && health2 > 0) {
-          health1 -= rounds[i].character1DamagesReceived;
-          health2 -= rounds[i].character2DamagesReceived;
-          i++;
+    let rounds: IRound[];
+    beforeAll(async () => {
+      charactersServiceMock.findOne.mockImplementation((id) => {
+        if (id === 1) {
+          return Promise.resolve(attacker);
         }
-
-        expect(i).toEqual(rounds.length);
+        return Promise.resolve(defender);
       });
+      rounds = await service.fights(1, 2);
+    });
+
+    it('Then charactersService.update is called twice', () => {
+      expect(charactersService.update).toHaveBeenCalledTimes(2);
+    });
+
+    it('Then fightRepository.save have been called', () => {
+      expect(fightsRepositoryMock.save).toHaveBeenCalled();
+    });
+
+    it('Then we have all rounds passed', () => {
+      expect(rounds.length).toBeGreaterThan(0);
+    });
+
+    it('Then fight stop when one character is dead', () => {
+      let i = 0;
+      while (attacker.isAlive() && defender.isAlive()) {
+        attacker.health -= rounds[i].attackerDamagesReceived;
+        defender.health -= rounds[i].defenderDamagesReceived;
+        i++;
+      }
+
+      expect(i).toEqual(rounds.length);
+    });
+  });
+
+  describe('When character 1 fight against character 2 and both are harmless', () => {
+    const attacker = new Character();
+    attacker.health = 12;
+    attacker.attack = 0;
+    attacker.defense = 3;
+    attacker.magik = 4;
+
+    const defender = new Character();
+    defender.health = 12;
+    defender.attack = 0;
+    defender.defense = 4;
+    defender.magik = 3;
+
+    beforeAll(() => {
+      charactersServiceMock.findOne.mockImplementation((id) => {
+        if (id === 1) {
+          return Promise.resolve(attacker);
+        }
+        return Promise.resolve(defender);
+      });
+     
+    });
+
+    it('Then fight throw an error', async() => {
+      await expect(service.fights(1, 2)).rejects.toThrowError(NoFightError);
+    });
   });
 });

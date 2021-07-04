@@ -1,6 +1,4 @@
-import { CustomError } from "./custom.error";
-
-export class NoFightError extends CustomError {
+export class NoFightError extends Error {
   constructor() {
     super('Combat impossible car aucune attaque possible');
   }

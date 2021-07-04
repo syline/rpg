@@ -1,6 +1,6 @@
 import { HttpStatus } from '@nestjs/common';
 import { Body, Controller, HttpException, Inject, Post, UseGuards } from '@nestjs/common';
-import { NoFightError } from 'src/shared/errors/no-fight.error';
+import { NoFightError } from '../shared/errors/no-fight.error';
 import { JwtAuthenticationGuard } from '../authentication/guards/jwt-authentication.guard';
 import { IFIGHTS_SERVICE } from '../constants/services.constant';
 import { ChallengersDto } from './dto/fight.dto';
@@ -16,7 +16,7 @@ export class FightsController {
 
   @Post()
   async fight(@Body() fight: ChallengersDto): Promise<IRound[]> {
-    return await this.fightsService.fights(fight)
+    return await this.fightsService.fights(fight.attackerId, fight.defenderId)
     .catch((err) => {
       if (err instanceof NoFightError) {
         throw new HttpException(err.message, HttpStatus.NOT_ACCEPTABLE);

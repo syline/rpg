@@ -13,7 +13,13 @@ export interface ICharactersService {
 
   update(id: number, updateCharacterDto: UpdateCharacterDto): Promise<UpdateResult>;
 
-  forwardSkillsToCharacter(characterId: number, updateCharacterDto: UpdateCharacterDto): Promise<Character>;
+  forwardSkillsToCharacter(
+    characterId: number,
+    health: number, 
+    defense: number, 
+    attack: number, 
+    magik: number,
+  ): Promise<Character>;
 
   remove(id: number);
 }

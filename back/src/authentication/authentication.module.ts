@@ -5,7 +5,7 @@ import { AuthenticationController } from './authentication.controller';
 import { LocalStrategy } from './strategies/local.strategy';
 import { PassportModule } from '@nestjs/passport';
 import { JwtModule } from '@nestjs/jwt';
-import { JWT_SECRET } from '../constants/jwt.contant';
+import { JWT_SECRET, TOKEN_DURATION } from '../constants/jwt.contant';
 import { JwtStrategy } from './strategies/jwt.strategy';
 import { IAUTHENTICATION_SERVICE } from '../constants/services.constant';
 
@@ -20,7 +20,7 @@ export const AuthenticationServiceProviders: Provider = {
     PassportModule,
     JwtModule.register({
       secret: JWT_SECRET,
-      signOptions: { expiresIn: '1h' },
+      signOptions: { expiresIn: TOKEN_DURATION },
     }),
   ],
   providers: [

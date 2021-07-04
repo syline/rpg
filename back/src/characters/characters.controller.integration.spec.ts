@@ -1,14 +1,13 @@
-import { INestApplication } from '@nestjs/common';
+import { HttpStatus, INestApplication } from '@nestjs/common';
 import { JwtModule, JwtService } from '@nestjs/jwt';
 import { Test, TestingModule } from '@nestjs/testing';
 import { getRepositoryToken } from '@nestjs/typeorm';
-import { Fight } from '../fights/entities/fight.entity';
-import { FightsServiceProvider } from '../fights/fights.module';
-import { fightsRepositoryMock } from '../fights/mocks/fights.repository.mock';
 import * as request from 'supertest';
 import { JwtStrategy } from '../authentication/strategies/jwt.strategy';
 import { JWT_SECRET } from '../constants/jwt.contant';
-import { User } from '../users/entities/user.entity';
+import { Fight } from '../fights/entities/fight.entity';
+import { FightsServiceProvider } from '../fights/fights.module';
+import { fightsRepositoryMock } from '../fights/mocks/fights.repository.mock';
 import { CharactersController } from './characters.controller';
 import { CharacterServiceProvider } from './characters.module';
 import { CreateCharacterDto } from './dto/create-character.dto';
@@ -22,7 +21,7 @@ describe('Given CharactersController', () => {
   let accessToken: string;
 
   const createCharacterData = new CreateCharacterDto();
-  createCharacterData.user = new User({ id: 1 });
+  createCharacterData.name = 'test';
   
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
@@ -61,7 +60,8 @@ describe('Given CharactersController', () => {
     let response;
 
     beforeEach(async () => {
-      characterRepositoryMock.save.mockReturnValue(Promise.resolve(createCharacterData));
+      characterRepositoryMock.find.mockReturnValue(Promise.resolve([]));
+      characterRepositoryMock.save.mockReturnValue(Promise.resolve(new Character()));
       response = await request(app.getHttpServer())
       .post('/characters')
       .set('Authorization', `Bearer ${accessToken}`)
@@ -69,11 +69,36 @@ describe('Given CharactersController', () => {
     });
 
     it('Then response status code = 201', () => {
-      expect(response.statusCode).toEqual(201);
+      expect(response.statusCode).toEqual(HttpStatus.CREATED);
     });
 
     it('Then it should retrieve added character', () => {
-      expect(response.body).toEqual(createCharacterData); 
+      expect(response.body).toEqual(new Character()); 
+    });
+  });
+
+  describe(`
+    When user is logged-in 
+    and create a character
+    and has already 10 characters
+    `, () => {
+    let response;
+
+    beforeEach(async () => {
+      const characters = [];
+      for (let i = 0; i < 10; i++) {
+        characters.push(new Character());
+      }
+      characterRepositoryMock.find.mockReturnValue(Promise.resolve(characters));
+      characterRepositoryMock.save.mockReturnValue(Promise.resolve(new Character()));
+      response = await request(app.getHttpServer())
+      .post('/characters')
+      .set('Authorization', `Bearer ${accessToken}`)
+      .send(createCharacterData);      
+    });
+
+    it('Then response status code = 406', () => {
+      expect(response.statusCode).toEqual(HttpStatus.NOT_ACCEPTABLE);
     });
   });
 
@@ -87,7 +112,7 @@ describe('Given CharactersController', () => {
     });
 
     it('Then response status code = 401 (unauthorized)', () => {
-      expect(response.statusCode).toEqual(401);
+      expect(response.statusCode).toEqual(HttpStatus.UNAUTHORIZED);
     });
   });
 
@@ -105,7 +130,7 @@ describe('Given CharactersController', () => {
     });
 
     it('Then response status code = 200', () => {
-      expect(response.statusCode).toEqual(200);
+      expect(response.statusCode).toEqual(HttpStatus.OK);
     });
 
     it('Then it should retrieve found character', () => {
@@ -124,7 +149,7 @@ describe('Given CharactersController', () => {
     });
 
     it('Then response status code = 401 (unauthorized)', () => {
-      expect(response.statusCode).toEqual(401);
+      expect(response.statusCode).toEqual(HttpStatus.UNAUTHORIZED);
     });
   });
 
@@ -133,6 +158,8 @@ describe('Given CharactersController', () => {
     let response;
 
     beforeEach(async () => {
+      characterRepositoryMock.findOne.mockReturnValue(Promise.resolve(new Character()));
+
       response = await request(app.getHttpServer())
       .patch('/characters/1')
       .set('Authorization', `Bearer ${accessToken}`)
@@ -140,7 +167,30 @@ describe('Given CharactersController', () => {
     });
 
     it('Then response status code = 200', () => {
-      expect(response.statusCode).toEqual(200);
+      expect(response.statusCode).toEqual(HttpStatus.OK);
+    });
+  });
+
+  describe('When user is logged-in and update a character with fake characteristics', () => {
+    let response;
+
+    beforeEach(async () => {
+      characterRepositoryMock.findOne.mockReturnValue(Promise.resolve(new Character()));
+
+      const updateCharacter = new UpdateCharacterDto();
+      updateCharacter.attack = 12;
+      updateCharacter.magik = 12;
+      updateCharacter.defense = 12;
+      updateCharacter.health = 12;
+
+      response = await request(app.getHttpServer())
+      .patch('/characters/1')
+      .set('Authorization', `Bearer ${accessToken}`)
+      .send(updateCharacter);      
+    });
+
+    it('Then response status code = 406', () => {
+      expect(response.statusCode).toEqual(HttpStatus.NOT_ACCEPTABLE);
     });
   });
 
@@ -154,7 +204,7 @@ describe('Given CharactersController', () => {
     });
 
     it('Then response status code = 401 (unauthorized)', () => {
-      expect(response.statusCode).toEqual(401);
+      expect(response.statusCode).toEqual(HttpStatus.UNAUTHORIZED);
     });
   });
 
@@ -163,13 +213,15 @@ describe('Given CharactersController', () => {
     let response;
 
     beforeEach(async () => {
+      characterRepositoryMock.delete.mockReturnValue(Promise.resolve(null));
+      
       response = await request(app.getHttpServer())
       .delete('/characters/1')
       .set('Authorization', `Bearer ${accessToken}`);
     });
 
     it('Then response status code = 200', () => {
-      expect(response.statusCode).toEqual(200);
+      expect(response.statusCode).toEqual(HttpStatus.OK);
     });
   });
 
@@ -182,7 +234,7 @@ describe('Given CharactersController', () => {
     });
 
     it('Then response status code = 401 (unauthorized)', () => {
-      expect(response.statusCode).toEqual(401);
+      expect(response.statusCode).toEqual(HttpStatus.UNAUTHORIZED);
     });
   });
 
@@ -195,14 +247,14 @@ describe('Given CharactersController', () => {
     const character = new Character();
 
     beforeEach(async () => {
-      characterRepositoryMock.query.mockReturnValue(Promise.resolve(character))
+      characterRepositoryMock.query.mockReturnValue(Promise.resolve([character]))
       response = await request(app.getHttpServer())
       .get('/characters/1/opponent')
       .set('Authorization', `Bearer ${accessToken}`);
     });
 
     it('Then response status code = 200', () => {
-      expect(response.statusCode).toEqual(200);
+      expect(response.statusCode).toEqual(HttpStatus.OK);
     });
 
     it('Then it should retrieve an opponent', () => {
@@ -218,18 +270,18 @@ describe('Given CharactersController', () => {
     let response;
 
     beforeEach(async () => {
-      characterRepositoryMock.query.mockReturnValue(Promise.resolve([]))
+      characterRepositoryMock.query.mockReturnValue(Promise.resolve({}))
       response = await request(app.getHttpServer())
       .get('/characters/1/opponent')
       .set('Authorization', `Bearer ${accessToken}`);
     });
 
     it('Then response status code = 200', () => {
-      expect(response.statusCode).toEqual(200);
+      expect(response.statusCode).toEqual(HttpStatus.OK);
     });
 
     it('Then it should retrieve an opponent', () => {
-      expect(response.body).toEqual([]); 
+      expect(response.body).toEqual({}); 
     });
   });
 
@@ -242,13 +294,13 @@ describe('Given CharactersController', () => {
     });
 
     it('Then response status code = 401 (unauthorized)', () => {
-      expect(response.statusCode).toEqual(401);
+      expect(response.statusCode).toEqual(HttpStatus.UNAUTHORIZED);
     });
   });
 
   describe('When user is logged-in and get character`s fights', () => {
     let response;
-    const fights = [new Fight(1, 2, 1)];
+    const fights = [new Fight(new Character(), new Character(), 1)];
     beforeEach(async () => {
       fightsRepositoryMock.find.mockReturnValue(Promise.resolve(fights));
       response = await request(app.getHttpServer())
@@ -257,7 +309,7 @@ describe('Given CharactersController', () => {
     });
 
     it('Then response status = 200', () => {
-      expect(response.statusCode).toEqual(200);
+      expect(response.statusCode).toEqual(HttpStatus.OK);
     })
 
     it('Then it should retreive all fights', () => {
@@ -274,7 +326,7 @@ describe('Given CharactersController', () => {
     });
 
     it('Then response status code = 401 (unauthorized)', () => {
-      expect(response.statusCode).toEqual(401);
+      expect(response.statusCode).toEqual(HttpStatus.UNAUTHORIZED);
     });
   });
 });

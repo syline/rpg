@@ -1,7 +1,7 @@
 import { Body, Controller, Delete, Get, HttpException, HttpStatus, Inject, Param, Patch, Post, Req, UseGuards } from '@nestjs/common';
-import { RequestWithUser } from 'src/authentication/interfaces/request-with-user.interface';
-import { LevelUpError } from 'src/shared/errors/level-up.error';
-import { MaxNbCharacterError } from 'src/shared/errors/max-nb-character.error';
+import { RequestWithUser } from '../authentication/interfaces/request-with-user.interface';
+import { LevelUpError } from '../shared/errors/level-up.error';
+import { MaxNbCharacterError } from '../shared/errors/max-nb-character.error';
 import { DeleteResult, UpdateResult } from 'typeorm';
 import { JwtAuthenticationGuard } from '../authentication/guards/jwt-authentication.guard';
 import { ICHARACTERS_SERVICE, IFIGHTS_SERVICE } from '../constants/services.constant';
@@ -49,7 +49,13 @@ export class CharactersController {
 
   @Patch(':id')
   async update(@Param('id') id: string, @Body() updateCharacterDto: UpdateCharacterDto): Promise<UpdateResult> {
-    return this.charactersService.forwardSkillsToCharacter(+id, updateCharacterDto)
+    return this.charactersService.forwardSkillsToCharacter(
+      +id,
+      updateCharacterDto.health,
+      updateCharacterDto.defense,
+      updateCharacterDto.attack,
+      updateCharacterDto.magik,
+    )
       .then((characterToUpdate: Character) => {
         return this.charactersService.update(+id, characterToUpdate);
       })

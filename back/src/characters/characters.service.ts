@@ -1,11 +1,10 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { CharacteristicsEnum } from 'src/enums/characteristics.enum';
-import { LevelUpError } from 'src/shared/errors/level-up.error';
-import { MaxNbCharacterError } from 'src/shared/errors/max-nb-character.error';
 import { Repository, UpdateResult } from 'typeorm';
+import { CharacteristicsEnum } from '../enums/characteristics.enum';
+import { LevelUpError } from '../shared/errors/level-up.error';
+import { MaxNbCharacterError } from '../shared/errors/max-nb-character.error';
 import { User } from '../users/entities/user.entity';
-import { UpdateCharacterDto } from './dto/update-CHARACTER.dto';
 import { Character } from './entities/CHARACTER.entity';
 import { getOpponentQuery } from './get-opponent-query';
 import { ICharactersService } from './interfaces/iCHARACTERs.service';
@@ -41,13 +40,19 @@ export class CharactersService implements ICharactersService {
     return await this.characterRepository.update(id, character);
   }
 
-  async forwardSkillsToCharacter(characterId: number, updateCharacterDto: UpdateCharacterDto): Promise<Character> {
+  async forwardSkillsToCharacter(
+    characterId: number, 
+    health: number, 
+    defense: number, 
+    attack: number, 
+    magik: number,
+  ): Promise<Character> {
     const character = await this.findOne(characterId);
 
-    this.forwardSkills(character, updateCharacterDto, CharacteristicsEnum.attack);
-    this.forwardSkills(character, updateCharacterDto, CharacteristicsEnum.defense);
-    this.forwardSkills(character, updateCharacterDto, CharacteristicsEnum.magik);
-    this.forwardHealth(character, updateCharacterDto);
+    this.forwardSkills(character, attack, CharacteristicsEnum.attack);
+    this.forwardSkills(character, defense, CharacteristicsEnum.defense);
+    this.forwardSkills(character, magik, CharacteristicsEnum.magik);
+    this.forwardHealth(character, health);
     
     if (character.skills < 0) {
       throw new LevelUpError();
@@ -58,23 +63,29 @@ export class CharactersService implements ICharactersService {
 
   private forwardSkills(
     characterToUpdate: Character, 
-    updateCharacterDto: UpdateCharacterDto, 
+    skill: number,
     characteristic: CharacteristicsEnum,
   ): void {
-    while(updateCharacterDto[characteristic] > 0) {
-      const cost = Math.ceil(characterToUpdate[characteristic] / 5);
+    while(skill > 0) {
+      let cost = Math.ceil(characterToUpdate[characteristic] / 5);
+      
+      if (cost === 0) {
+        cost = 1;
+      }
+
       characterToUpdate.skills -= cost;
       characterToUpdate[characteristic]++;
-      updateCharacterDto[characteristic]--;
+      skill--;
     }
   }
 
   private forwardHealth(
     characterToUpdate: Character, 
-    updateCharacterDto: UpdateCharacterDto, 
+    health: number, 
   ): void {
-    characterToUpdate.skills -= updateCharacterDto.health;
-    characterToUpdate.health += updateCharacterDto.health;
+    characterToUpdate.skills -= health;
+    characterToUpdate.health += health;
+
   }
 
   async remove(id: number) {
