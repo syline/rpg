@@ -1,4 +1,4 @@
-import { Body, Controller, Delete, Get, HttpException, HttpStatus, Inject, Param, Patch, Post, Req, UseGuards } from '@nestjs/common';
+import { Body, Controller, Delete, Get, HttpException, HttpStatus, Inject, Param, ParseIntPipe, Patch, Post, Req, UseGuards } from '@nestjs/common';
 import { RequestWithUser } from '../authentication/interfaces/request-with-user.interface';
 import { LevelUpError } from '../shared/errors/level-up.error';
 import { MaxNbCharacterError } from '../shared/errors/max-nb-character.error';
@@ -33,22 +33,22 @@ export class CharactersController {
   }
 
   @Get(':id/opponent')
-  getOpponent(@Param('id') id: string): Promise<Character> {
-    return this.charactersService.getOpponent(+id);
+  getOpponent(@Param('id', ParseIntPipe) id: number): Promise<Character> {
+    return this.charactersService.getOpponent(id);
   }
 
   @Get(':id/fights')
-  getFights(@Param('id') id: string): Promise<Fight[]> {
-    return this.fightsService.findAllByCharacterId(+id);
+  getFights(@Param('id', ParseIntPipe) id: number): Promise<Fight[]> {
+    return this.fightsService.findAllByCharacterId(id);
   }
 
   @Get(':id')
-  findOne(@Param('id') id: string): Promise<Character> {
-    return this.charactersService.findOne(+id);
+  findOne(@Param('id', ParseIntPipe) id: number): Promise<Character> {
+    return this.charactersService.findOne(id);
   }
 
   @Patch(':id')
-  async update(@Param('id') id: string, @Body() updateCharacterDto: UpdateCharacterDto): Promise<UpdateResult> {
+  async update(@Param('id', ParseIntPipe) id: number, @Body() updateCharacterDto: UpdateCharacterDto): Promise<UpdateResult> {
     return this.charactersService.forwardSkillsToCharacter(
       +id,
       updateCharacterDto.health,
@@ -57,7 +57,7 @@ export class CharactersController {
       updateCharacterDto.magik,
     )
       .then((characterToUpdate: Character) => {
-        return this.charactersService.update(+id, characterToUpdate);
+        return this.charactersService.update(id, characterToUpdate);
       })
       .catch((err) => {
         if (err instanceof LevelUpError) {
@@ -69,7 +69,7 @@ export class CharactersController {
   }
 
   @Delete(':id')
-  remove(@Param('id') id: string): Promise<DeleteResult> {
-    return this.charactersService.remove(+id);
+  remove(@Param('id', ParseIntPipe) id: number): Promise<DeleteResult> {
+    return this.charactersService.remove(id);
   }
 }
