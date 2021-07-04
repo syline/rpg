@@ -13,7 +13,7 @@ import { DeleteCharacterComponent } from './delete-character/delete-character.co
   styleUrls: ['./characters.component.scss']
 })
 export class CharactersComponent implements OnInit {
-  displayedColumns: string[] = ['name', 'health', 'attack', 'defense', 'magik', 'rank', 'skills', 'free', 'update', 'delete'];
+  displayedColumns: string[] = ['name', 'health', 'attack', 'defense', 'magik', 'rank', 'skills', 'update', 'delete', 'fight'];
   dataSource: MatTableDataSource<Character>;
 
   @ViewChild(MatTable) table: MatTable<Character>;

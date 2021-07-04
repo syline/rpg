@@ -1,13 +1,13 @@
 export const getOpponentQuery = (characterId: number) => {
   return `
     SELECT 
-      ID as id, 
-      USERID as userId, 
+      ID as id,
       NAME as name, 
       HEALTH as health, 
       ATTACK as attack, 
       DEFENSE as defense, 
       MAGIK as magik
+      RANK as rank
     FROM (
       -- characters with min diff rank + nb fights > 0 + free for fighting
       SELECT 
@@ -18,6 +18,7 @@ export const getOpponentQuery = (characterId: number) => {
         C2.ATTACK, 
         C2.DEFENSE, 
         C2.MAGIK,
+        C2.RANK,
         -- calculate diff rank with current character
         C2.RANK - (
           SELECT C.RANK 
@@ -38,6 +39,7 @@ export const getOpponentQuery = (characterId: number) => {
           )
         FROM CHARACTER C2 
         WHERE C2.ID <> ${characterId}
+        AND (C2.NEXTFIGHTTIMEMIN IS NULL OR C2.NEXTFIGHTTIMEMIN <= DATETIME('NOW'))
       )
       AND (C2.NEXTFIGHTTIMEMIN IS NULL OR C2.NEXTFIGHTTIMEMIN <= DATETIME('NOW'))
       GROUP BY C2.ID
@@ -53,6 +55,7 @@ export const getOpponentQuery = (characterId: number) => {
         C3.ATTACK, 
         C3.DEFENSE, 
         C3.MAGIK,
+        C3.RANK,
         -- calculate diff rank with current character
         C3.RANK - (
           SELECT C.RANK 
@@ -78,6 +81,7 @@ export const getOpponentQuery = (characterId: number) => {
           ) 
         FROM CHARACTER C2 
         WHERE C2.ID <> ${characterId}
+        AND (C2.NEXTFIGHTTIMEMIN IS NULL OR C2.NEXTFIGHTTIMEMIN <= DATETIME('NOW'))
       )
       AND (C3.NEXTFIGHTTIMEMIN IS NULL or C3.NEXTFIGHTTIMEMIN <= DATETIME('NOW'))
       GROUP BY C3.ID
@@ -107,6 +111,7 @@ export const getOpponentQuery = (characterId: number) => {
             ) 
           FROM CHARACTER C2 
           WHERE C2.ID <> ${characterId}
+          AND (C2.NEXTFIGHTTIMEMIN IS NULL OR C2.NEXTFIGHTTIMEMIN <= DATETIME('NOW'))
         )
         AND (C2.NEXTFIGHTTIMEMIN IS NULL or C2.NEXTFIGHTTIMEMIN <= DATETIME('NOW'))
         GROUP BY C2.ID
@@ -139,6 +144,7 @@ export const getOpponentQuery = (characterId: number) => {
             ) 
           FROM CHARACTER C2 
           WHERE C2.ID <> ${characterId}
+          AND (C2.NEXTFIGHTTIMEMIN IS NULL OR C2.NEXTFIGHTTIMEMIN <= DATETIME('NOW'))
         )
         AND (C3.NEXTFIGHTTIMEMIN IS NULL OR C3.NEXTFIGHTTIMEMIN <= DATETIME('NOW'))
         GROUP BY C3.ID

@@ -20,7 +20,7 @@ export class Character {
     Object.assign(this, dto);
   }
 
-  isFree(): boolean {
+  canFight(): boolean {
     return this.nextFightTimeMin === null || this.nextFightTimeMin <= new Date();
   }
 

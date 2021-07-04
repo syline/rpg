@@ -85,6 +85,11 @@ export class CharactersService implements ICharactersService {
   }
 
   async getOpponent(characterId: number): Promise<Character> {
-    return await this.characterRepository.query(getOpponentQuery(characterId));
+    return await this.characterRepository.query(getOpponentQuery(characterId))
+    .then((characters: Character[]) => {
+      if (characters.length > 0) {
+        return characters[0];
+      }
+    });
   }
 }

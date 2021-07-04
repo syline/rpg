@@ -56,8 +56,8 @@ export class FightsService implements IFightsService {
 
   private async getChallengers(challengersId: ChallengersDto): Promise<Character[]> {
     return await Promise.all([
-      this.charactersService.findOne(challengersId.character1Id),
-      this.charactersService.findOne(challengersId.character2Id),
+      this.charactersService.findOne(challengersId.attackerId),
+      this.charactersService.findOne(challengersId.defenderId),
     ])
   }
 
@@ -66,15 +66,16 @@ export class FightsService implements IFightsService {
     let nbRound = 1;
 
     while (character1.health > 0 && character2.health > 0) {
-      const character2DamagesReceived = this.attack(character1, character2);
+      const defenderDamagesReceived = this.attack(character1, character2);
 
       if (character2.health < 1) {
-        rounds.push({ id: nbRound, character2DamagesReceived, character1DamagesReceived: 0 });
+        rounds.push({ id: nbRound, defenderDamagesReceived, attackerDamagesReceived: 0 });
         break;
       }
 
-      const character1DamagesReceived = this.attack(character2, character1);
-      rounds.push({ id: nbRound, character2DamagesReceived, character1DamagesReceived });
+      const attackerDamagesReceived = this.attack(character2, character1);
+
+      rounds.push({ id: nbRound, defenderDamagesReceived, attackerDamagesReceived });
 
       nbRound++;
     }

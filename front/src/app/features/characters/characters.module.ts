@@ -10,6 +10,7 @@ import { CharactersRoutingModule } from './characters-routing.module';
 import { CharactersComponent } from './characters.component';
 import { CreateCharacterModule } from './create-character/create-character.module';
 import { DeleteCharacterModule } from './delete-character/delete-character.module';
+import { FightModule } from './fight/fight.module';
 import { UpdateCharacterModule } from './update-character/update-character.module';
 
 @NgModule({
@@ -29,6 +30,7 @@ import { UpdateCharacterModule } from './update-character/update-character.modul
     CreateCharacterModule,
     UpdateCharacterModule,
     DeleteCharacterModule,
+    FightModule,
   ]
 })
 export class CharactersModule { }

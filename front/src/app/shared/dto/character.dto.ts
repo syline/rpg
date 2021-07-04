@@ -5,7 +5,7 @@ export class CharacterDto {
   health: number;
   magik: number;
   name: string;
-  nextFightTimeMin: Date;
-  rank: number;
-  skills: number;
+  nextFightTimeMin?: Date;
+  rank?: number;
+  skills?: number;
 }
