@@ -1,6 +1,5 @@
 import { CharacterDto } from '../dto/character.dto';
 import { CharacteristicEnum } from '../enums/characteristic.enum';
-import { Fight } from './fight';
 import { User } from './user';
 
 export class Character {
@@ -14,7 +13,6 @@ export class Character {
   rank: number;
   nextFightTimeMin?: Date;
   user: User;
-  fights: Fight[];
 
   constructor(dto: CharacterDto | Character) {
     Object.assign(this, dto);

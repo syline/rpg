@@ -36,7 +36,7 @@ export class Character {
   @ManyToOne(() => User, user => user.characters)
   user: User;
 
-  @OneToMany(() => Fight, fight => fight.character1)
+  @OneToMany(() => Fight, fight => fight.attacker)
   fights: Fight[];
 
   constructor() {

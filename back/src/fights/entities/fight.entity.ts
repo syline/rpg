@@ -9,20 +9,20 @@ export class Fight {
   
   @ManyToOne(() => Character, character => character.fights)
   @JoinColumn()
-  character1: Character;
+  attacker: Character;
 
   @ManyToOne(() => Character, character => character.fights)
   @JoinColumn()
-  character2: Character;
+  defender: Character;
 
   @Column()
   winnerId: number;
 
-  constructor(idCharacter1: number, idCharacter2: number, winnerId: number) {
-    this.character1 = new Character();
-    this.character1.id = idCharacter1;
-    this.character2 = new Character();
-    this.character2.id = idCharacter2;
+  constructor(attackerId: number, defenderId: number, winnerId: number) {
+    this.attacker = new Character();
+    this.attacker.id = attackerId;
+    this.defender = new Character();
+    this.defender.id = defenderId;
     this.winnerId = winnerId;
   }
 

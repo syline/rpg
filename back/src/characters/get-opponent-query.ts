@@ -6,7 +6,7 @@ export const getOpponentQuery = (characterId: number) => {
       HEALTH as health, 
       ATTACK as attack, 
       DEFENSE as defense, 
-      MAGIK as magik
+      MAGIK as magik,
       RANK as rank
     FROM (
       -- characters with min diff rank + nb fights > 0 + free for fighting
@@ -27,7 +27,7 @@ export const getOpponentQuery = (characterId: number) => {
         ) AS DIFF_RANK,
         COUNT(*) AS NB_FIGHTS
       FROM CHARACTER C2      
-      INNER JOIN FIGHT F ON (F.CHARACTER1ID = C2.ID OR F.CHARACTER2ID = C2.ID)
+      INNER JOIN FIGHT F ON (F.ATTACKERID = C2.ID OR F.DEFENDERID = C2.ID)
       WHERE C2.ID <> ${characterId} 
       -- get min diff rank
       AND DIFF_RANK = (
@@ -69,7 +69,7 @@ export const getOpponentQuery = (characterId: number) => {
       AND C3.ID NOT IN (
         SELECT C4.ID
         FROM CHARACTER C4
-        INNER JOIN FIGHT F ON (F.CHARACTER1ID = C4.ID OR F.CHARACTER2ID = C4.ID)
+        INNER JOIN FIGHT F ON (F.ATTACKERID = C4.ID OR F.DEFENDERID = C4.ID)
       )
       -- get min diff rank
       AND DIFF_RANK = (
@@ -99,7 +99,7 @@ export const getOpponentQuery = (characterId: number) => {
           ) AS DIFF_RANK,
           COUNT(*) AS NB_FIGHTS
         FROM CHARACTER C2      
-        INNER JOIN FIGHT F ON (F.CHARACTER1ID = C2.ID OR F.CHARACTER2ID = C2.ID)
+        INNER JOIN FIGHT F ON (F.ATTACKERID = C2.ID OR F.DEFENDERID = C2.ID)
         WHERE C2.ID <> ${characterId} 
         -- min diff rank
         AND DIFF_RANK = (
@@ -132,7 +132,7 @@ export const getOpponentQuery = (characterId: number) => {
         AND C3.ID NOT IN (
           SELECT C4.ID
           FROM CHARACTER C4
-          INNER JOIN FIGHT F ON F.CHARACTER1ID = C4.ID OR F.CHARACTER2ID = C4.ID 
+          INNER JOIN FIGHT F ON F.ATTACKERID = C4.ID OR F.DEFENDERID = C4.ID 
         )
         -- min diff rank
         AND DIFF_RANK = (

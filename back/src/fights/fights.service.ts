@@ -22,10 +22,10 @@ export class FightsService implements IFightsService {
   async findAllByCharacterId(id: number): Promise<Fight[]> {
     return await this.fightRepository.find({
       where: [
-        { character1: { id } },
-        { character2: { id } }
+        { attacker: { id } },
+        { defender: { id } }
       ],
-      relations: ['character1', 'character2']
+      relations: ['attacker', 'defender']
     })
   }
 
