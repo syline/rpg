@@ -5,6 +5,7 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
 import { MatIconModule } from '@angular/material/icon';
 import { RouterModule } from '@angular/router';
+import { FighterModule } from 'src/app/shared/components/fighter/fighter.module';
 import { FightComponent } from './fight.component';
 
 
@@ -20,6 +21,8 @@ import { FightComponent } from './fight.component';
     MatIconModule,
     RouterModule,
     MatButtonModule,
+
+    FighterModule,
   ]
 })
 export class FightModule { }

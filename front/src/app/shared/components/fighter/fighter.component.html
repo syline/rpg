@@ -1,0 +1,12 @@
+<mat-card>
+  <mat-card-title fxLayout="row" fxLayoutAlign="center center">{{ fighter.name }}</mat-card-title>
+  <img mat-card-image [src]="urlImg" />
+  <mat-card-content fxLayout="column">
+    <span>Points de vie : {{ fighter.health }}</span>
+    <span>Rang : {{ fighter.rank }}</span>
+    <span>Attaque : {{ fighter.attack }}</span>
+    <span>Défense : {{ fighter.defense }}</span>
+    <span>Magie : {{ fighter.magik }}</span>
+  </mat-card-content>
+  <mat-card-footer *ngIf="winner === fighter.id" fxLayout="row" fxLayoutAlign="center center">Winner !</mat-card-footer>
+</mat-card>

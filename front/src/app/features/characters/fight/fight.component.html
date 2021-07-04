@@ -11,33 +11,11 @@
 </div>
 
 <div fxLayout="row" fxLayoutAlign="center center" fxLayoutGap="50px">
-  <mat-card fxFlex="20">
-    <mat-card-title fxLayout="row" fxLayoutAlign="center center">{{ attacker.name }}</mat-card-title>
-    <img mat-card-image src="../../../assets/attacker.png" />
-    <mat-card-content fxLayout="column">
-      <span>Points de vie : {{ attacker.health }}</span>
-      <span>Rang : {{ attacker.rank }}</span>
-      <span>Attaque : {{ attacker.attack }}</span>
-      <span>Défense : {{ attacker.defense }}</span>
-      <span>Magie : {{ attacker.magik }}</span>
-    </mat-card-content>
-    <mat-card-footer *ngIf="winner === attacker.id" fxLayout="row" fxLayoutAlign="center center">Winner !</mat-card-footer>
-  </mat-card>
+  <app-fighter fxFlex="20" [fighter]="attacker" urlImg="../../../assets/attacker.png" [winner]="winner"></app-fighter>
 
   <p class="vs">VS</p>
 
-  <mat-card fxFlex="20" *ngIf="defender.id">
-    <mat-card-title fxLayout="row" fxLayoutAlign="center center">{{ defender.name }}</mat-card-title>
-    <img mat-card-image src="../../../assets/defender.png" />
-    <mat-card-content fxLayout="column">
-      <span>Points de vie : {{ defender.health }}</span>
-      <span>Rang : {{ defender.rank }}</span>
-      <span>Attaque : {{ defender.attack }}</span>
-      <span>Défense : {{ defender.defense }}</span>
-      <span>Magie : {{ defender.magik }}</span>
-    </mat-card-content>
-    <mat-card-footer *ngIf="winner === defender.id" fxLayout="row" fxLayoutAlign="center center">Winner !</mat-card-footer>
-  </mat-card>
+  <app-fighter fxFlex="20" [fighter]="defender" urlImg="../../../assets/defender.png" [winner]="winner"></app-fighter>
 </div>
 
 <div *ngFor="let round of rounds" fxLayout="column" fxLayoutAlign="center center">
