@@ -3,12 +3,14 @@ import { Injectable } from '@angular/core';
 import { Router } from '@angular/router';
 import { Observable, of } from 'rxjs';
 import { catchError } from 'rxjs/operators';
+import { AuthenticationService } from '../services/authentication.service';
 import { NotificationsService } from '../services/notifications.service';
 
 @Injectable()
 export class ServerErrorInterceptor implements HttpInterceptor {
 
   constructor(
+    private authService: AuthenticationService,
     private notificationsService: NotificationsService,
     private router: Router,
   ) { }
@@ -32,7 +34,10 @@ export class ServerErrorInterceptor implements HttpInterceptor {
   }
 
   private redirectToHomepage(): void {
+    this.authService.logout();
+
     this.notificationsService.showInformation('Veuillez vous reconnecter');
+
     this.router.navigate(['/homepage']);
   }
 

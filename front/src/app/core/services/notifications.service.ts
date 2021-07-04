@@ -9,11 +9,14 @@ export class NotificationsService {
   constructor(private snackBar: MatSnackBar) { }
 
   showInformation(message: string): void {
-    this.snackBar.open(message, 'OK');
+    const config = new MatSnackBarConfig();
+    config.duration = 3000;
+    this.snackBar.open(message, 'OK', config);
   }
 
   showErrorMessage(message: string): void {
     const config = new MatSnackBarConfig();
+    config.duration = 3000;
     config.panelClass = 'snack-bar-error';
 
     this.snackBar.open(message, 'OK', config);
@@ -21,6 +24,7 @@ export class NotificationsService {
 
   showSuccessMessage(message: string): void {
     const config = new MatSnackBarConfig();
+    config.duration = 3000;
     config.panelClass = 'snack-bar-success';
 
     this.snackBar.open(message, 'OK', config);

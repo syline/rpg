@@ -2,7 +2,9 @@
   <div fxLayout="row" fxLayoutAlign="space-between">
     <h1>Mes personnages</h1>
 
-    <button *ngIf="canCreateCharacter()" mat-raised-button color="accent" (click)="addCharacter()">Ajouter un personnage</button>
+    <button *ngIf="canCreateCharacter()" mat-raised-button color="accent" (click)="addCharacter()">
+      Ajouter un personnage
+    </button>
   </div>
 
   <table mat-table [dataSource]="dataSource" fxFlex>
@@ -52,7 +54,7 @@
         <a [routerLink]="['update', element.id]" *ngIf="element.hasSkills()">
           <button mat-mini-fab color="primary" aria-label="update">
             <mat-icon>edit</mat-icon>
-        </button>
+          </button>
         </a>
       </td>
     </ng-container>
@@ -62,7 +64,7 @@
       <td mat-cell *matCellDef="let element">
         <button mat-mini-fab color="accent" aria-label="delete" (click)="deleteCharacter(element.id)">
           <mat-icon>delete</mat-icon>
-      </button>
+        </button>
       </td>
     </ng-container>
 

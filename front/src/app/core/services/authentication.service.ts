@@ -50,4 +50,8 @@ export class AuthenticationService {
   getToken(): string {
     return localStorage.getItem(ACCESS_TOKEN);
   }
+
+  logout(): void {
+    localStorage.clear();
+  }
 }
