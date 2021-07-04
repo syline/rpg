@@ -14,7 +14,6 @@ import { HeaderComponent } from './header.component';
 describe('Given HeaderComponent', () => {
   let component: HeaderComponent;
   let fixture: ComponentFixture<HeaderComponent>;
-  let dialogService: MatDialog;
   let authService: AuthenticationService;
 
   beforeEach(async () => {
@@ -51,7 +50,6 @@ describe('Given HeaderComponent', () => {
     fixture = TestBed.createComponent(HeaderComponent);
     component = fixture.componentInstance;
 
-    dialogService = TestBed.inject(MatDialog);
     authService = TestBed.inject(AuthenticationService);
 
     fixture.detectChanges();
@@ -60,23 +58,6 @@ describe('Given HeaderComponent', () => {
   describe('When component is called', () => {
     it('Then it should be created', () => {
       expect(component).toBeTruthy();
-    });
-  });
-
-  describe('When user is not logged-in and clicks on create an account', () => {
-    beforeEach(() => {
-      authService.isLoggedIn = jasmine.createSpy('isLoggedIn').and.returnValue(false);
-      spyOn(component, 'createAccount').and.callThrough();
-      const buttonElement = fixture.debugElement.query(By.css('.create-account'));
-      buttonElement.triggerEventHandler('click', null);
-    });
-
-    it('Then createAccount is called', () => {
-      expect(component.createAccount).toHaveBeenCalled();
-    });
-
-    it('Then a dialog is open', () => {
-      expect(dialogService.open).toHaveBeenCalled();
     });
   });
 

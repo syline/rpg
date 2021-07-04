@@ -10,7 +10,7 @@
   </mat-form-field>
 
   <div fxLayout="row" fxLayoutAlign="space-between">
-    <button class="cancel-btn" mat-button color="primary" [mat-dialog-close]="null">Annuler</button>
+    <button class="cancel-btn" mat-button color="primary" (click)="close()">Annuler</button>
     <button class="create-btn" mat-button color="accent" (click)="add()">Créer</button>
   </div>
 </form>

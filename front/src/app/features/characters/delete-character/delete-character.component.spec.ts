@@ -25,7 +25,6 @@ describe('Given DeleteCharacterComponent', () => {
       ],
       imports: [
         MatButtonModule,
-        MatDialogModule,
       ],
       providers: [
         {

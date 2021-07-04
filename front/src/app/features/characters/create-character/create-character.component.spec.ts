@@ -31,7 +31,6 @@ describe('Given CreateCharacterComponent', () => {
         MatInputModule,
         MatButtonModule,
         NoopAnimationsModule,
-        MatDialogModule,
         ReactiveFormsModule,
       ],
       providers: [

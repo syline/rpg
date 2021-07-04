@@ -35,4 +35,8 @@ export class CreateCharacterComponent implements OnInit {
       }),
     ).subscribe();
   }
+
+  close(): void {
+    this.dialogRef.close(null);
+  }
 }

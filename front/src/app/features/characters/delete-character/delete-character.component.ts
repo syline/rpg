@@ -25,4 +25,8 @@ export class DeleteCharacterComponent {
       }),
     ).subscribe();
   }
+
+  close(): void {
+    this.dialogRef.close(false);
+  }
 }
