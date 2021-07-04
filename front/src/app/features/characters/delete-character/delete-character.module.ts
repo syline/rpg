@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { MatDialogModule } from '@angular/material/dialog';
 import { DeleteCharacterComponent } from './delete-character.component';
 import { MatButtonModule } from '@angular/material/button';
+import { FlexLayoutModule } from '@angular/flex-layout';
 
 @NgModule({
   declarations: [DeleteCharacterComponent],
@@ -10,6 +11,7 @@ import { MatButtonModule } from '@angular/material/button';
     CommonModule,
     MatDialogModule,
     MatButtonModule,
+    FlexLayoutModule,
   ]
 })
 export class DeleteCharacterModule { }

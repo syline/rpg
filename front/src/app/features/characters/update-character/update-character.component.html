@@ -1,5 +1,7 @@
+<app-title-bar title="Mettre à jour les caractéristiques"></app-title-bar>
+
+
 <div fxLayout="column" fxLayoutGap="50px">
-  <h1>Mettre à jour les caractéristiques</h1>
 
   <div fxLayout="column" class="points" fxLayoutGap="20px">
     <div fxLayout="row" fxLayoutAlign="center center">
@@ -87,7 +89,7 @@
   </div>
 
   <div fxLayout="row" class="actions" fxLayoutAlign="space-around">
-    <button mat-raised-button color="accent" (click)="reset()">Réinitialiser</button>
-    <button mat-raised-button color="primary" (click)="updateCharacter()">Valider</button>
+    <button mat-button color="accent" (click)="reset()">Réinitialiser</button>
+    <button mat-button color="primary" (click)="updateCharacter()">Valider</button>
   </div>
 </div>

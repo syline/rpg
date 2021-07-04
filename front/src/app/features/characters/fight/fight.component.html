@@ -1,10 +1,4 @@
-<div fxLayout="row" fxLayoutAlign="space-between">
-  <h1>Combat</h1>
-
-  <a [routerLink]="['/characters']">
-    <button mat-button color="primary" aria-label="back">Retour</button>
-  </a>
-</div>
+<app-title-bar title="Combat"></app-title-bar>
 
 <div *ngIf="!defender.id" fxLayout="row" fxLayoutAlign="center center" class="no-opponent">
   <span>Aucun opposant trouvé</span>

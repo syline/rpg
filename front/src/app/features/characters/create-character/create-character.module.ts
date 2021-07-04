@@ -5,6 +5,7 @@ import { MatInputModule } from '@angular/material/input';
 import { MatButtonModule } from '@angular/material/button';
 import { CreateCharacterComponent } from './create-character.component';
 import { FlexLayoutModule } from '@angular/flex-layout';
+import { MatDialogModule } from '@angular/material/dialog';
 
 @NgModule({
   declarations: [CreateCharacterComponent],
@@ -14,6 +15,7 @@ import { FlexLayoutModule } from '@angular/flex-layout';
     MatInputModule,
     MatButtonModule,
     FlexLayoutModule,
+    MatDialogModule,
   ]
 })
 export class CreateCharacterModule { }

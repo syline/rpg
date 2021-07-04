@@ -4,6 +4,7 @@ import { MatButtonModule } from '@angular/material/button';
 import { UpdateCharacterComponent } from './update-character.component';
 import { MatIconModule } from '@angular/material/icon';
 import { FlexLayoutModule } from '@angular/flex-layout';
+import { TitleBarModule } from 'src/app/shared/components/title-bar/title-bar.module';
 
 @NgModule({
   declarations: [UpdateCharacterComponent],
@@ -13,6 +14,7 @@ import { FlexLayoutModule } from '@angular/flex-layout';
     MatIconModule,
 
     FlexLayoutModule,
+    TitleBarModule,
   ]
 })
 export class UpdateCharacterModule { }

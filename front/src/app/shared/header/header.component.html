@@ -1,8 +1,8 @@
 <mat-toolbar>
   <span fxFlex>RPG</span>
-  <button class="create-account" *ngIf="!isLoggedIn()" mat-raised-button color="primary" (click)="createAccount()">Créer un compte</button>
+  <button class="create-account" *ngIf="!isLoggedIn()" mat-button color="primary" (click)="createAccount()">Créer un compte</button>
 
-  <button *ngIf="isLoggedIn()" mat-mini-fab color="primary" aria-label="logout" (click)="logout()">
-    <mat-icon>logout</mat-icon>
+  <button *ngIf="isLoggedIn()" mat-button color="primary" aria-label="logout" (click)="logout()">
+    Se déconnecter
   </button>
 </mat-toolbar>

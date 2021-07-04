@@ -30,8 +30,8 @@ export class CreateCharacterComponent implements OnInit {
 
     this.charactersService.create(this.name.value).pipe(
       tap((newCharacter: Character) => {
-        this.notificationsService.showSuccessMessage('Personnage créé avec succès !');
         this.dialogRef.close(newCharacter);
+        this.notificationsService.showSuccessMessage('Personnage créé avec succès !');
       }),
     ).subscribe();
   }
