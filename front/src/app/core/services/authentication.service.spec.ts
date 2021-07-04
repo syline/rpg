@@ -32,7 +32,7 @@ describe('Given AuthenticationService', () => {
   });
 
   describe('When register is called', () => {
-    const data = { login: '', password: ''};
+    const data = { login: '', password: '' };
     beforeEach(() => {
       service.register(data);
     });
@@ -46,7 +46,7 @@ describe('Given AuthenticationService', () => {
     const token = 'token';
     const id = 1;
     const login = 'login';
-    const data = { login, password: ''};
+    const data = { login, password: '' };
 
     beforeEach(() => {
       httpClient.post = jasmine.createSpy('post').and.returnValue(of({ id, login, accessToken: token }));
@@ -65,7 +65,7 @@ describe('Given AuthenticationService', () => {
       expect(localStorage.getItem(CURRENT_USER_ID)).toEqual(id.toString());
     });
 
-    it('Then localStorage has current user id', () => {
+    it('Then localStorage has current user login', () => {
       expect(localStorage.getItem(CURRENT_USER_LOGIN)).toEqual(login);
     });
   });
@@ -135,6 +135,24 @@ describe('Given AuthenticationService', () => {
 
     it('Then getToken should retrieve ABC', () => {
       expect(response).toEqual(token);
+    });
+  });
+
+  describe('When logout is called', () => {
+    beforeEach(() => {
+      service.logout();
+    });
+
+    it('Then getting current user id return null', () => {
+      expect(localStorage.getItem(CURRENT_USER_ID)).toBeNull();
+    });
+
+    it('Then getting current user login return null', () => {
+      expect(localStorage.getItem(CURRENT_USER_LOGIN)).toBeNull();
+    });
+
+    it('Then getting access token return null', () => {
+      expect(localStorage.getItem(ACCESS_TOKEN)).toBeNull();
     });
   });
 });

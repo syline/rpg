@@ -15,7 +15,6 @@ export class FightComponent implements OnInit {
   attacker: Character;
   defender: Character;
   rounds: Round[];
-
   winner: number;
 
   constructor(
@@ -36,15 +35,20 @@ export class FightComponent implements OnInit {
       }),
       tap((rounds: Round[]) => {
         this.rounds = rounds;
-
-        this.rounds.forEach((round: Round) => {
-          this.attacker.health -= round.attackerDamagesReceived;
-          this.defender.health -= round.defenderDamagesReceived;
-        });
-
-        this.winner = this.attacker.health > 0 ? this.attacker.id : this.defender.id;
+        this.playRounds();
+        this.determineWinner();
       })
     ).subscribe();
   }
 
+  private playRounds(): void {
+    this.rounds.forEach((round: Round) => {
+      this.attacker.health -= round.attackerDamagesReceived;
+      this.defender.health -= round.defenderDamagesReceived;
+    });
+  }
+
+  private determineWinner(): void {
+    this.winner = this.attacker.isAlive() ? this.attacker.id : this.defender.id;
+  }
 }

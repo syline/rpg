@@ -35,7 +35,9 @@ describe('Given NotificationsService', () => {
     });
 
     it('Then open is called without config', () => {
-      expect(snackBar.open).toHaveBeenCalledWith(message, 'OK');
+      const config = new MatSnackBarConfig();
+      config.duration = 3000;
+      expect(snackBar.open).toHaveBeenCalledWith(message, 'OK', config);
     });
   });
 
@@ -47,6 +49,7 @@ describe('Given NotificationsService', () => {
     it('Then open is called with error css class', () => {
       const config = new MatSnackBarConfig();
       config.panelClass = 'snack-bar-error';
+      config.duration = 3000;
       expect(snackBar.open).toHaveBeenCalledWith(message, 'OK', config);
     });
   });
@@ -59,6 +62,7 @@ describe('Given NotificationsService', () => {
     it('Then open is called with success css class', () => {
       const config = new MatSnackBarConfig();
       config.panelClass = 'snack-bar-success';
+      config.duration = 3000;
       expect(snackBar.open).toHaveBeenCalledWith(message, 'OK', config);
     });
   });

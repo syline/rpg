@@ -5,8 +5,6 @@ import { FighterModule } from 'src/app/shared/components/fighter/fighter.module'
 import { TitleBarModule } from 'src/app/shared/components/title-bar/title-bar.module';
 import { FightComponent } from './fight.component';
 
-
-
 @NgModule({
   declarations: [
     FightComponent

@@ -39,7 +39,7 @@ export class Character {
   @OneToMany(() => Fight, fight => fight.attacker)
   fights: Fight[];
 
-  constructor() {
+  constructor(name?: string, userId?: number) {
     this.skills = 12;
     this.health = 10;
     this.attack = 0;
@@ -47,5 +47,13 @@ export class Character {
     this.magik = 0;
     this.rank = 1;
     this.nextFightTimeMin = null;
+    
+    if (name) {
+      this.name = name;
+    }
+
+    if (userId) {
+      this.user = new User({ id: userId });
+    }
   }
 }

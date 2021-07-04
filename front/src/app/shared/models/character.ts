@@ -18,6 +18,10 @@ export class Character {
     Object.assign(this, dto);
   }
 
+  isAlive(): boolean {
+    return this.health > 0;
+  }
+
   canFight(): boolean {
     return this.nextFightTimeMin === null || this.nextFightTimeMin <= new Date();
   }

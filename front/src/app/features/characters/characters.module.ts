@@ -5,7 +5,6 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatDialogModule } from '@angular/material/dialog';
 import { MatIconModule } from '@angular/material/icon';
 import { MatTableModule } from '@angular/material/table';
-import { YesNoPipe } from 'src/app/shared/pipes/yes-no.pipe';
 import { CharactersRoutingModule } from './characters-routing.module';
 import { CharactersComponent } from './characters.component';
 import { CreateCharacterModule } from './create-character/create-character.module';
@@ -17,7 +16,6 @@ import { UpdateCharacterModule } from './update-character/update-character.modul
 @NgModule({
   declarations: [
     CharactersComponent,
-    YesNoPipe,
   ],
   imports: [
     CommonModule,

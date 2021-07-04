@@ -1,4 +1,5 @@
-import { Body, Controller, Delete, Get, HttpException, HttpStatus, Inject, Param, Patch, Post, UseGuards } from '@nestjs/common';
+import { Body, Controller, Delete, Get, HttpException, HttpStatus, Inject, Param, Patch, Post, Req, UseGuards } from '@nestjs/common';
+import { RequestWithUser } from 'src/authentication/interfaces/request-with-user.interface';
 import { LevelUpError } from 'src/shared/errors/level-up.error';
 import { MaxNbCharacterError } from 'src/shared/errors/max-nb-character.error';
 import { DeleteResult, UpdateResult } from 'typeorm';
@@ -20,8 +21,8 @@ export class CharactersController {
   ) { }
 
   @Post()
-  create(@Body() createCharacterDto: CreateCharacterDto): Promise<Character | void> {
-    return this.charactersService.create(createCharacterDto)
+  create(@Req() request: RequestWithUser, @Body() createCharacterDto: CreateCharacterDto): Promise<Character | void> {
+    return this.charactersService.create(createCharacterDto.name, request.user.id)
       .catch((err) => {
         if (err instanceof MaxNbCharacterError) {
           throw new HttpException(err.message, HttpStatus.NOT_ACCEPTABLE);

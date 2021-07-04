@@ -26,8 +26,8 @@ export class CharactersService {
   }
 
   create(name: string): Observable<Character> {
-    const character = new CreateCharacterDto(name, +this.authService.getCurrentUserId());
-    return this.httpClient.post<Character>(`${environment.apiUrl}/characters`, character);
+    const createCharacter = new CreateCharacterDto(name);
+    return this.httpClient.post<Character>(`${environment.apiUrl}/characters`, createCharacter);
   }
 
   getById(id: number): Observable<Character> {
