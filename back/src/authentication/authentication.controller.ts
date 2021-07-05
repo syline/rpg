@@ -1,6 +1,6 @@
 import { Body, ClassSerializerInterceptor, Controller, HttpCode, HttpException, HttpStatus, Inject, Post, Req, UseGuards, UseInterceptors } from '@nestjs/common';
-import { CredentialsError } from '../shared/errors/credentials.error';
-import { LoginAlreadyExistError } from '../shared/errors/login-already-exist.error';
+import { CredentialsError } from '../errors/credentials.error';
+import { LoginAlreadyExistError } from '../errors/login-already-exist.error';
 import { IAUTHENTICATION_SERVICE } from '../constants/services.constant';
 import { CreateUserDto } from '../users/dto/create-user.dto';
 import { User } from '../users/entities/user.entity';

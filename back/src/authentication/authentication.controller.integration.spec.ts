@@ -3,7 +3,7 @@ import { JwtService } from '@nestjs/jwt';
 import { Test, TestingModule } from '@nestjs/testing';
 import * as bcrypt from 'bcrypt';
 import * as request from 'supertest';
-import { LoginAlreadyExistError } from '../shared/errors/login-already-exist.error';
+import { LoginAlreadyExistError } from '../errors/login-already-exist.error';
 import { User } from '../users/entities/user.entity';
 import { userRepositoryMock } from '../users/mocks/user.repository.mock';
 import { UsersServiceProvider } from '../users/users.module';

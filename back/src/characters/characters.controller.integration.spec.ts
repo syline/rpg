@@ -9,7 +9,7 @@ import { JWT_SECRET, TOKEN_DURATION } from '../constants/jwt.contant';
 import { Fight } from '../fights/entities/fight.entity';
 import { FightsServiceProvider } from '../fights/fights.module';
 import { fightsRepositoryMock } from '../fights/mocks/fights.repository.mock';
-import { NoOpponentError } from '../shared/errors/no-opponent.error';
+import { NoOpponentError } from '../errors/no-opponent.error';
 import { CharactersController } from './characters.controller';
 import { CharacterServiceProvider } from './characters.module';
 import { CharactersRepository } from './characters.repository';

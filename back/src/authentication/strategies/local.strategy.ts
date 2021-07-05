@@ -1,7 +1,7 @@
 import { HttpException, HttpStatus, Inject, Injectable } from '@nestjs/common';
 import { PassportStrategy } from '@nestjs/passport';
 import { Strategy } from 'passport-local';
-import { CredentialsError } from '../../shared/errors/credentials.error';
+import { CredentialsError } from '../../errors/credentials.error';
 import { IAUTHENTICATION_SERVICE } from '../../constants/services.constant';
 import { User } from '../../users/entities/user.entity';
 import { IAuthenticationService } from '../interfaces/iauthentication.service';

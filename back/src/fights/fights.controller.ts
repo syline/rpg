@@ -1,6 +1,6 @@
 import { HttpStatus } from '@nestjs/common';
 import { Body, Controller, HttpException, Inject, Post, UseGuards } from '@nestjs/common';
-import { NoFightError } from '../shared/errors/no-fight.error';
+import { NoFightError } from '../errors/no-fight.error';
 import { JwtAuthenticationGuard } from '../authentication/guards/jwt-authentication.guard';
 import { IFIGHTS_SERVICE } from '../constants/services.constant';
 import { ChallengersDto } from './dto/fight.dto';

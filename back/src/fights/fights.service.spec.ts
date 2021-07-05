@@ -4,7 +4,7 @@ import { Character } from '../characters/entities/character.entity';
 import { characterRepositoryMock } from '../characters/mocks/characters.repository.mock';
 import { charactersServiceMock } from '../characters/mocks/characters.service.mock';
 import { ICHARACTERS_SERVICE, IFIGHTS_SERVICE } from '../constants/services.constant';
-import { NoFightError } from '../shared/errors/no-fight.error';
+import { NoFightError } from '../errors/no-fight.error';
 import { FightsServiceProvider } from './fights.module';
 import { FightsRepository } from './fights.repository';
 import { IFightsService } from './interfaces/ifights.service';

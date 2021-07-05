@@ -1,4 +1,4 @@
-import { NoOpponentError } from "../shared/errors/no-opponent.error";
+import { NoOpponentError } from "../errors/no-opponent.error";
 import { EntityRepository, Repository } from "typeorm";
 import { User } from "../users/entities/user.entity";
 import { Character } from "./entities/character.entity";

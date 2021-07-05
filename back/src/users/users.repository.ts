@@ -1,7 +1,7 @@
 import { EntityRepository, Repository } from "typeorm";
 import { SqliteErrorsEnum } from "../enums/sqlite-errors.enum";
-import { CredentialsError } from "../shared/errors/credentials.error";
-import { LoginAlreadyExistError } from "../shared/errors/login-already-exist.error";
+import { CredentialsError } from "../errors/credentials.error";
+import { LoginAlreadyExistError } from "../errors/login-already-exist.error";
 import { User } from "./entities/user.entity";
 
 @EntityRepository(User)

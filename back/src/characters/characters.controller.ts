@@ -1,13 +1,13 @@
 import { Body, Controller, Delete, Get, HttpException, HttpStatus, Inject, Param, ParseIntPipe, Patch, Post, Req, UseGuards } from '@nestjs/common';
-import { NoOpponentError } from '../shared/errors/no-opponent.error';
+import { NoOpponentError } from '../errors/no-opponent.error';
 import { DeleteResult, UpdateResult } from 'typeorm';
 import { JwtAuthenticationGuard } from '../authentication/guards/jwt-authentication.guard';
 import { RequestWithUser } from '../authentication/interfaces/request-with-user.interface';
 import { ICHARACTERS_SERVICE, IFIGHTS_SERVICE } from '../constants/services.constant';
 import { Fight } from '../fights/entities/fight.entity';
 import { IFightsService } from '../fights/interfaces/ifights.service';
-import { LevelUpError } from '../shared/errors/level-up.error';
-import { MaxNbCharacterError } from '../shared/errors/max-nb-character.error';
+import { LevelUpError } from '../errors/level-up.error';
+import { MaxNbCharacterError } from '../errors/max-nb-character.error';
 import { CreateCharacterDto } from './dto/create-character.dto';
 import { UpdateCharacterDto } from './dto/update-character.dto';
 import { Character } from './entities/character.entity';

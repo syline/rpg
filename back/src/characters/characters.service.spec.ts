@@ -1,6 +1,6 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { ICHARACTERS_SERVICE } from '../constants/services.constant';
-import { MaxNbCharacterError } from '../shared/errors/max-nb-character.error';
+import { MaxNbCharacterError } from '../errors/max-nb-character.error';
 import { User } from '../users/entities/user.entity';
 import { CharacterServiceProvider } from './characters.module';
 import { CharactersRepository } from './characters.repository';

@@ -2,7 +2,7 @@ import { Inject, Injectable } from '@nestjs/common';
 import { Character } from '../characters/entities/character.entity';
 import { ICharactersService } from '../characters/interfaces/icharacters.service';
 import { ICHARACTERS_SERVICE } from '../constants/services.constant';
-import { NoFightError } from '../shared/errors/no-fight.error';
+import { NoFightError } from '../errors/no-fight.error';
 import { Fight } from './entities/fight.entity';
 import { FightsRepository } from './fights.repository';
 import { IChallengers } from './interfaces/ichallengers';

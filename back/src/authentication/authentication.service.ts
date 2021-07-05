@@ -2,7 +2,7 @@ import { Inject, Injectable } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import * as bcrypt from 'bcrypt';
 import { IUSERS_SERVICE } from '../constants/services.constant';
-import { CredentialsError } from '../shared/errors/credentials.error';
+import { CredentialsError } from '../errors/credentials.error';
 import { User } from '../users/entities/user.entity';
 import { IUsersService } from '../users/interfaces/iuser.service';
 import { UserTokenDto } from './dto/user-token.dto';

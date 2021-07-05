@@ -1,6 +1,6 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { IUSERS_SERVICE } from '../constants/services.constant';
-import { CredentialsError } from '../shared/errors/credentials.error';
+import { CredentialsError } from '../errors/credentials.error';
 import { User } from './entities/user.entity';
 import { userRepositoryMock } from './mocks/user.repository.mock';
 import { UsersServiceProvider } from './users.module';
