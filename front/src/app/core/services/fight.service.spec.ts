@@ -2,11 +2,13 @@ import { HttpClient } from '@angular/common/http';
 import { TestBed } from '@angular/core/testing';
 import { of } from 'rxjs';
 import { CharacterDto } from 'src/app/shared/dto/character.dto';
+import { FightResultsDto } from 'src/app/shared/dto/fight-results.dto';
 import { FightDto } from 'src/app/shared/dto/fight.dto';
 import { OppponentsDto } from 'src/app/shared/dto/opponents.dto';
 import { RoundDto } from 'src/app/shared/dto/round.dto';
 import { Character } from 'src/app/shared/models/character';
 import { Fight } from 'src/app/shared/models/fight';
+import { FightResults } from 'src/app/shared/models/fight-results';
 import { Round } from 'src/app/shared/models/round';
 import { httpClientMockService } from 'src/app/shared/tests/services/http-client.mock.service';
 import { environment } from 'src/environments/environment';
@@ -60,11 +62,11 @@ describe('Given FightService', () => {
   describe('When fighting', () => {
     const attackerId = 1;
     const defenderId = 2;
-    const rounds = [new RoundDto()];
+    const fightResultsDto = new FightResultsDto();
     let response;
 
     beforeEach(() => {
-      httpClient.post = jasmine.createSpy('post').and.returnValue(of(rounds));
+      httpClient.post = jasmine.createSpy('post').and.returnValue(of(fightResultsDto));
       service.fight(attackerId, defenderId).subscribe(res => response = res);
     });
 
@@ -73,8 +75,8 @@ describe('Given FightService', () => {
       expect(httpClient.post).toHaveBeenCalledWith(`${environment.apiUrl}/fights`, opponentsDto);
     });
 
-    it('Then it retrieves rounds', () => {
-      expect(response).toEqual([new Round(new RoundDto())]);
+    it('Then it retrieves fight results', () => {
+      expect(response).toEqual(new FightResults(fightResultsDto));
     });
   });
 
