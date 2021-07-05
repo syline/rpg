@@ -1,16 +1,15 @@
 import { JwtService } from '@nestjs/jwt';
 import { Test, TestingModule } from '@nestjs/testing';
 import * as bcrypt from 'bcrypt';
-import { User } from '../users/entities/user.entity';
 import { IAUTHENTICATION_SERVICE, IUSERS_SERVICE } from '../constants/services.constant';
-import { SqliteErrorsEnum } from '../enums/sqlite-errors.enum';
+import { CredentialsError } from '../shared/errors/credentials.error';
+import { LoginAlreadyExistError } from '../shared/errors/login-already-exist.error';
+import { User } from '../users/entities/user.entity';
 import { usersServiceMock } from '../users/mocks/users.service.mock';
 import { AuthenticationServiceProviders } from './authentication.module';
 import { AuthenticationService } from './authentication.service';
-import { UserDto } from './dto/user.dto';
+import { UserTokenDto } from './dto/user-token.dto';
 import { jwtServiceMock } from './mocks/jwt.service.mock';
-import { LoginAlreadyExistError } from '../shared/errors/login-already-exist.error';
-import { CredentialsError } from '../shared/errors/credentials.error';
 
 describe('Given AuthenticationService', () => {
   let service: AuthenticationService;
@@ -58,7 +57,7 @@ describe('Given AuthenticationService', () => {
 
   describe('When register a user with an existing login', () => {
     beforeEach(() => {
-      usersServiceMock.create.mockRejectedValue({ code: SqliteErrorsEnum.constraint });
+      usersServiceMock.create.mockRejectedValue(new LoginAlreadyExistError());
     });
 
     it('Then an exception is thrown', async () => {
@@ -72,7 +71,7 @@ describe('Given AuthenticationService', () => {
     beforeEach(async () => {
       usersServiceMock.getByLogin.mockReturnValue(Promise.resolve(new User({ })));
       (bcrypt.compare as jest.Mock) = jest.fn().mockReturnValue(true);
-      retrievedUser = await service.getAuthenticatedUser('test', 'test');
+      retrievedUser = await service.checkLoginPassword('test', 'test');
     });
 
     it('Then user is retrieved', () => {
@@ -82,11 +81,11 @@ describe('Given AuthenticationService', () => {
 
   describe('When authenticate user with wrong login', () => {
     beforeEach(() => {
-      usersServiceMock.getByLogin.mockRejectedValue(new Error());
+      usersServiceMock.getByLogin.mockRejectedValue(new CredentialsError());
     });
 
     it('Then an exception is thrown', async () => {
-      await expect(service.getAuthenticatedUser('test', 'test')).rejects.toThrow(CredentialsError);
+      await expect(service.checkLoginPassword('test', 'test')).rejects.toThrow(CredentialsError);
     });
   });
 
@@ -97,16 +96,16 @@ describe('Given AuthenticationService', () => {
     });
 
     it('Then an exception is thrown', async () => {
-      await expect(service.getAuthenticatedUser('test', 'test')).rejects.toThrow(CredentialsError);
+      await expect(service.checkLoginPassword('test', 'test')).rejects.toThrow(CredentialsError);
     });
   });
 
   describe('When user log in', () => {
-    let user: UserDto;
+    let user: UserTokenDto;
 
     beforeEach(async () => {
       jwtServiceMock.sign.mockReturnValue('token');
-      user = await service.login(new User({ id: 1, login: 'login', password: 'password' }));
+      user = await service.getAccessToken(new User({ id: 1, login: 'login', password: 'password' }));
     });
 
     it('Then a user is retrieved with id, login and access token', () => {

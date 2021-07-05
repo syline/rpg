@@ -4,10 +4,10 @@ import { LoginAlreadyExistError } from '../shared/errors/login-already-exist.err
 import { IAUTHENTICATION_SERVICE } from '../constants/services.constant';
 import { CreateUserDto } from '../users/dto/create-user.dto';
 import { User } from '../users/entities/user.entity';
-import { UserDto } from './dto/user.dto';
 import { LocalAuthenticationGuard } from './guards/local-authentication.guard';
 import { IAuthenticationService } from './interfaces/iauthentication.service';
 import { RequestWithUser } from './interfaces/request-with-user.interface';
+import { UserTokenDto } from './dto/user-token.dto';
 
 @Controller('authentication')
 export class AuthenticationController {
@@ -34,8 +34,8 @@ export class AuthenticationController {
   @UseGuards(LocalAuthenticationGuard)
   @UseInterceptors(ClassSerializerInterceptor)
   @Post('login')
-  async login(@Req() request: RequestWithUser): Promise<UserDto> {
-    return this.authenticationService.login(request.user)
+  async login(@Req() request: RequestWithUser): Promise<UserTokenDto> {
+    return this.authenticationService.getAccessToken(request.user)
     .catch((err) => {
       if (err instanceof CredentialsError) {
         throw new HttpException(err.message, HttpStatus.UNAUTHORIZED);

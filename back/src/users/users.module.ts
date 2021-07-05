@@ -1,10 +1,10 @@
 import { Module, Provider } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { User } from './entities/user.entity';
-import { UsersService } from './users.service';
-import { UsersController } from './users.controller';
 import { CharactersModule } from '../characters/characters.module';
 import { IUSERS_SERVICE } from '../constants/services.constant';
+import { UsersController } from './users.controller';
+import { UserRepository } from './users.repository';
+import { UsersService } from './users.service';
 
 export const UsersServiceProvider: Provider = {
   provide: IUSERS_SERVICE,
@@ -13,7 +13,7 @@ export const UsersServiceProvider: Provider = {
 
 @Module({
   imports: [
-    TypeOrmModule.forFeature([User]),
+    TypeOrmModule.forFeature([UserRepository]),
     CharactersModule,
   ],
   controllers: [

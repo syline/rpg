@@ -1,13 +1,11 @@
 import { Inject, Injectable } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import * as bcrypt from 'bcrypt';
-import { CredentialsError } from '../shared/errors/credentials.error';
-import { LoginAlreadyExistError } from '../shared/errors/login-already-exist.error';
 import { IUSERS_SERVICE } from '../constants/services.constant';
-import { SqliteErrorsEnum } from '../enums/sqlite-errors.enum';
+import { CredentialsError } from '../shared/errors/credentials.error';
 import { User } from '../users/entities/user.entity';
 import { IUsersService } from '../users/interfaces/iuser.service';
-import { UserDto } from './dto/user.dto';
+import { UserTokenDto } from './dto/user-token.dto';
 import { IAuthenticationService } from './interfaces/iauthentication.service';
 
 @Injectable()
@@ -18,30 +16,19 @@ export class AuthenticationService implements IAuthenticationService {
   ) { }
 
   async register(login: string, plainTextPassword: string): Promise<User> {
-    try {
-      const password = await bcrypt.hash(plainTextPassword, 10);
-      const createdUser = await this.usersService.create(new User({ login, password }));
+    const password = await bcrypt.hash(plainTextPassword, 10);
+    const createdUser = await this.usersService.create(new User({ login, password }));
 
-      return new User(createdUser);
-    } catch (error) {
-      if (error?.code === SqliteErrorsEnum.constraint) {
-        throw new LoginAlreadyExistError();
-      }
-      throw error;
-    }
+    return new User(createdUser);
   }
 
-  async getAuthenticatedUser(login: string, plainTextPassword: string): Promise<User> {
-    try {
-      const user = await this.usersService.getByLogin(login);
-      await this.checkPassword(plainTextPassword, user.password);
+  async checkLoginPassword(login: string, plainTextPassword: string): Promise<User> {
+    const user = await this.usersService.getByLogin(login);
+    await this.checkPassword(plainTextPassword, user.password);
 
-      return new User(user);
-    } catch (error) {
-      throw new CredentialsError();
-    }
+    return new User(user);
   }
-   
+
   private async checkPassword(plainTextPassword: string, hashedPassword: string): Promise<void> {
     const isPasswordMatching = await bcrypt.compare(
       plainTextPassword,
@@ -52,12 +39,8 @@ export class AuthenticationService implements IAuthenticationService {
     }
   }
 
-  async login(user: User): Promise<UserDto> {
+  async getAccessToken(user: User): Promise<UserTokenDto> {
     const payload = { username: user.login, sub: user.id };
-    return {
-      id: user.id,
-      login: user.login,
-      accessToken: this.jwtService.sign(payload),
-    };
+    return new UserTokenDto(user, this.jwtService.sign(payload));
   }
 }

@@ -1,10 +1,10 @@
 import { User } from "../../users/entities/user.entity";
-import { UserDto } from "../dto/user.dto";
+import { UserTokenDto } from "../dto/user-token.dto";
 
 export interface IAuthenticationService {
   register(login: string, password: string): Promise<User>;
 
-  getAuthenticatedUser(login: string, plainTextPassword: string): Promise<User>;
+  checkLoginPassword(login: string, plainTextPassword: string): Promise<User>;
 
-  login(user: User): Promise<UserDto>;
+  getAccessToken(user: User): Promise<UserTokenDto>;
 }

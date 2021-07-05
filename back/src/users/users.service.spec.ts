@@ -1,29 +1,29 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import { getRepositoryToken } from '@nestjs/typeorm';
 import { IUSERS_SERVICE } from '../constants/services.constant';
-import { Repository } from 'typeorm';
+import { CredentialsError } from '../shared/errors/credentials.error';
 import { User } from './entities/user.entity';
 import { userRepositoryMock } from './mocks/user.repository.mock';
 import { UsersServiceProvider } from './users.module';
+import { UserRepository } from './users.repository';
 import { UsersService } from './users.service';
 
 describe('Given UsersService', () => {
   let service: UsersService;
-  let repository: Repository<User>;
+  let repository: UserRepository;
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
       providers: [
         UsersServiceProvider,
         {
-          provide: getRepositoryToken(User),
+          provide: UserRepository,
           useValue: userRepositoryMock,
         }
       ],
     }).compile();
 
     service = module.get<UsersService>(IUSERS_SERVICE);
-    repository = module.get(getRepositoryToken(User));
+    repository = module.get<UserRepository>(UserRepository);
   });
 
   describe('When service is called', () => {
@@ -33,14 +33,14 @@ describe('Given UsersService', () => {
   })
 
   describe('When create a user', () => {
-    const createUserData = { login: 'test', password: 'test' };
+    const user = new User({ login: 'test', password: 'test' });
 
     beforeEach(() => {
-      service.create(createUserData);
+      service.create(user);
     });
 
-    it('Then repository.save should have been called', () => {
-      expect(repository.save).toHaveBeenCalledWith(createUserData);
+    it('Then repository.createUser should have been called', () => {
+      expect(repository.createUser).toHaveBeenCalledWith(user);
     });
   });
 
@@ -49,7 +49,7 @@ describe('Given UsersService', () => {
     let retreivedUser: User;
 
     beforeEach(async () => {
-      userRepositoryMock.findOne.mockReturnValue(Promise.resolve(user));
+      userRepositoryMock.getByLogin.mockReturnValue(Promise.resolve(user));
       retreivedUser = await service.getByLogin('test');
     });
 
@@ -60,11 +60,11 @@ describe('Given UsersService', () => {
 
   describe('When get user by unexisting login', () => {
     beforeEach(() => {
-      userRepositoryMock.findOne.mockReturnValue(undefined);
+      userRepositoryMock.getByLogin.mockRejectedValue(new CredentialsError());
     });
 
     it('Then an exception is thrown', async () => {
-      await expect(service.getByLogin('test')).rejects.toThrow();
+      await expect(service.getByLogin('test')).rejects.toThrowError(CredentialsError);
     })
   })
 });

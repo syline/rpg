@@ -1,4 +1,4 @@
 export const userRepositoryMock = {
-  save: jest.fn(), 
-  findOne: jest.fn(), 
+  createUser: jest.fn(), 
+  getByLogin: jest.fn(), 
 }

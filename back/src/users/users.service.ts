@@ -1,26 +1,19 @@
-import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
-import { CreateUserDto } from './dto/create-user.dto';
+import { Injectable } from '@nestjs/common';
 import { User } from './entities/user.entity';
 import { IUsersService } from './interfaces/iuser.service';
+import { UserRepository } from './users.repository';
 
 @Injectable()
 export class UsersService implements IUsersService {
   constructor(
-    @InjectRepository(User)
-    private userRepository: Repository<User>,
+    private userRepository: UserRepository,
   ) { }
 
-  async create(user: CreateUserDto): Promise<User> {
-    return await this.userRepository.save(user);
+  async create(user: User): Promise<User> {
+    return this.userRepository.createUser(user);
   }
 
   async getByLogin(login: string): Promise<User> {
-    const user = await this.userRepository.findOne({ login });
-    if (user) {
-      return user;
-    }
-    throw new HttpException('User with this login does not exist', HttpStatus.NOT_FOUND);
+    return this.userRepository.getByLogin(login);
   }
 }

@@ -1,13 +1,13 @@
-import { INestApplication } from '@nestjs/common';
+import { HttpStatus, INestApplication } from '@nestjs/common';
 import { JwtModule, JwtService } from '@nestjs/jwt';
 import { Test, TestingModule } from '@nestjs/testing';
-import { getRepositoryToken } from '@nestjs/typeorm';
 import * as request from 'supertest';
 import { JwtStrategy } from '../authentication/strategies/jwt.strategy';
 import { CharacterServiceProvider } from '../characters/characters.module';
+import { CharactersRepository } from '../characters/characters.repository';
 import { Character } from '../characters/entities/character.entity';
 import { characterRepositoryMock } from '../characters/mocks/characters.repository.mock';
-import { JWT_SECRET } from '../constants/jwt.contant';
+import { JWT_SECRET, TOKEN_DURATION } from '../constants/jwt.contant';
 import { UsersController } from './users.controller';
 
 describe('Given UsersController', () => {
@@ -20,7 +20,7 @@ describe('Given UsersController', () => {
       imports: [
         JwtModule.register({
           secret: JWT_SECRET,
-          signOptions: { expiresIn: '1h' },
+          signOptions: { expiresIn: TOKEN_DURATION },
         }),
       ],
       controllers: [UsersController],
@@ -28,7 +28,7 @@ describe('Given UsersController', () => {
         CharacterServiceProvider,
         JwtStrategy,
         {
-          provide: getRepositoryToken(Character),
+          provide: CharactersRepository,
           useValue: characterRepositoryMock,
         }
       ],
@@ -46,14 +46,14 @@ describe('Given UsersController', () => {
     const characters = [new Character(), new Character(), new Character()];
 
     beforeEach(async () => {
-      characterRepositoryMock.find.mockReturnValue(Promise.resolve(characters));
+      characterRepositoryMock.getByUserId.mockReturnValue(Promise.resolve(characters));
       response = await request(app.getHttpServer())
       .get('/users/1/characters')
       .set('Authorization', `Bearer ${accessToken}`);
     });
 
     it('Then response status code = 200', () => {
-      expect(response.statusCode).toEqual(200);
+      expect(response.statusCode).toEqual(HttpStatus.OK);
     });
 
     it('Then it should retrieve all user\'s characters', () => {
@@ -70,7 +70,7 @@ describe('Given UsersController', () => {
     });
 
     it('Then response status code = 401 (unauthorized)', () => {
-      expect(response.statusCode).toEqual(401);
+      expect(response.statusCode).toEqual(HttpStatus.UNAUTHORIZED);
     });
   });
 

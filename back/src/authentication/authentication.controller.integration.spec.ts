@@ -1,13 +1,13 @@
 import { HttpStatus, INestApplication } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { Test, TestingModule } from '@nestjs/testing';
-import { getRepositoryToken } from '@nestjs/typeorm';
 import * as bcrypt from 'bcrypt';
-import { UsersServiceProvider } from '../users/users.module';
 import * as request from 'supertest';
-import { SqliteErrorsEnum } from '../enums/sqlite-errors.enum';
+import { LoginAlreadyExistError } from '../shared/errors/login-already-exist.error';
 import { User } from '../users/entities/user.entity';
 import { userRepositoryMock } from '../users/mocks/user.repository.mock';
+import { UsersServiceProvider } from '../users/users.module';
+import { UserRepository } from '../users/users.repository';
 import { AuthenticationController } from './authentication.controller';
 import { AuthenticationServiceProviders } from './authentication.module';
 import { jwtServiceMock } from './mocks/jwt.service.mock';
@@ -29,7 +29,7 @@ describe('Given AuthenticationController', () => {
         UsersServiceProvider,
         LocalStrategy,
         {
-          provide: getRepositoryToken(User),
+          provide: UserRepository,
           useValue: userRepositoryMock,
         },
         {
@@ -48,7 +48,7 @@ describe('Given AuthenticationController', () => {
   describe('When register a new user with valid data', () => {
     let response;
     beforeEach(async () => {
-      userRepositoryMock.save.mockReturnValue(Promise.resolve(createUserData));
+      userRepositoryMock.createUser.mockReturnValue(Promise.resolve(createUserData));
       response = await request(app.getHttpServer())
       .post('/authentication/register')
       .send(createUserData);
@@ -67,7 +67,7 @@ describe('Given AuthenticationController', () => {
     let response;
 
     beforeEach(async () => {
-      userRepositoryMock.save.mockRejectedValue({ code: SqliteErrorsEnum.constraint });
+      userRepositoryMock.createUser.mockRejectedValue(new LoginAlreadyExistError());
       response = await request(app.getHttpServer())
       .post('/authentication/register')
       .send(createUserData);
@@ -82,7 +82,7 @@ describe('Given AuthenticationController', () => {
     let response;
     
     beforeEach(async () => {
-      userRepositoryMock.save.mockRejectedValue(new Error());
+      userRepositoryMock.createUser.mockRejectedValue(new Error());
 
       response = await request(app.getHttpServer())
       .post('/authentication/register')
@@ -99,7 +99,7 @@ describe('Given AuthenticationController', () => {
 
     beforeEach(async () => {
       const mockUserData = new User({ id: 1, login: 'test', password: 'test' });
-      userRepositoryMock.findOne.mockReturnValue(Promise.resolve(mockUserData));
+      userRepositoryMock.getByLogin.mockReturnValue(Promise.resolve(mockUserData));
       (bcrypt.compare as jest.Mock) = jest.fn().mockReturnValue(true);
       jwtServiceMock.sign.mockReturnValue('');
 
