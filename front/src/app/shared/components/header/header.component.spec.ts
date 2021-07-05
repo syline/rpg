@@ -5,10 +5,10 @@ import { By } from '@angular/platform-browser';
 import { Router } from '@angular/router';
 import { AuthenticationService } from 'src/app/core/services/authentication.service';
 import { NotificationsService } from 'src/app/core/services/notifications.service';
-import { authenticationMockService } from '../tests/services/authentication.mock.service';
-import { matDialogRefMockService } from '../tests/services/mat-dialog-ref.mock.service';
-import { notificationsMockService } from '../tests/services/notifications.mock.service';
-import { routerMockService } from '../tests/services/router.mock.service';
+import { authenticationMockService } from '../../tests/services/authentication.mock.service';
+import { matDialogRefMockService } from '../../tests/services/mat-dialog-ref.mock.service';
+import { notificationsMockService } from '../../tests/services/notifications.mock.service';
+import { routerMockService } from '../../tests/services/router.mock.service';
 import { HeaderComponent } from './header.component';
 
 describe('Given HeaderComponent', () => {

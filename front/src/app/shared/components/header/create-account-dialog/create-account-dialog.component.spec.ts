@@ -4,10 +4,10 @@ import { MatDialogModule, MatDialogRef } from '@angular/material/dialog';
 import { of } from 'rxjs';
 import { AuthenticationService } from 'src/app/core/services/authentication.service';
 import { NotificationsService } from 'src/app/core/services/notifications.service';
-import { LoginPasswordMockComponent } from '../../tests/components/login-password.mock.component';
-import { authenticationMockService } from '../../tests/services/authentication.mock.service';
-import { matDialogRefMockService } from '../../tests/services/mat-dialog-ref.mock.service';
-import { notificationsMockService } from '../../tests/services/notifications.mock.service';
+import { LoginPasswordMockComponent } from '../../../tests/components/login-password.mock.component';
+import { authenticationMockService } from '../../../tests/services/authentication.mock.service';
+import { matDialogRefMockService } from '../../../tests/services/mat-dialog-ref.mock.service';
+import { notificationsMockService } from '../../../tests/services/notifications.mock.service';
 import { CreateAccountDialogComponent } from './create-account-dialog.component';
 
 describe('Given CreateAccountDialogComponent', () => {

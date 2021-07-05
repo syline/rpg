@@ -5,7 +5,7 @@ import { ReactiveFormsModule } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { MatDialogModule } from '@angular/material/dialog';
 import { MatToolbarModule } from '@angular/material/toolbar';
-import { LoginPasswordModule } from '../components/login-password/login-password.module';
+import { LoginPasswordModule } from '../login-password/login-password.module';
 import { CreateAccountDialogModule } from './create-account-dialog/create-account-dialog.module';
 import { HeaderComponent } from './header.component';
 

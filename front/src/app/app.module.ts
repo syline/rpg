@@ -9,7 +9,7 @@ import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import { ServerErrorInterceptor } from './core/interceptors/server-error.interceptor';
 import { TokenInterceptor } from './core/interceptors/token.interceptor';
-import { HeaderModule } from './shared/header/header.module';
+import { HeaderModule } from './shared/components/header/header.module';
 
 @NgModule({
   declarations: [
