@@ -8,5 +8,5 @@
     <span>Défense : {{ fighter.defense }}</span>
     <span>Magie : {{ fighter.magik }}</span>
   </mat-card-content>
-  <mat-card-footer *ngIf="winner === fighter.id" fxLayout="row" fxLayoutAlign="center center">Winner !</mat-card-footer>
+  <mat-card-footer *ngIf="winner?.id === fighter.id" fxLayout="row" fxLayoutAlign="center center">Winner !</mat-card-footer>
 </mat-card>

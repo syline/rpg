@@ -3,12 +3,12 @@ import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { CharacterDto } from 'src/app/shared/dto/character.dto';
+import { FightResultsDto } from 'src/app/shared/dto/fight-results.dto';
 import { FightDto } from 'src/app/shared/dto/fight.dto';
 import { OppponentsDto } from 'src/app/shared/dto/opponents.dto';
-import { RoundDto } from 'src/app/shared/dto/round.dto';
 import { Character } from 'src/app/shared/models/character';
 import { Fight } from 'src/app/shared/models/fight';
-import { Round } from 'src/app/shared/models/round';
+import { FightResults } from 'src/app/shared/models/fight-results';
 import { environment } from 'src/environments/environment';
 
 @Injectable({
@@ -26,10 +26,10 @@ export class FightService {
     );
   }
 
-  fight(attackerId: number, defenderId: number): Observable<any> {
+  fight(attackerId: number, defenderId: number): Observable<FightResults> {
     const opponentsDto = new OppponentsDto(attackerId, defenderId);
-    return this.httpClient.post(`${environment.apiUrl}/fights`, opponentsDto).pipe(
-      map((rounds: RoundDto[]) => rounds.map((round: RoundDto) => new Round(round))),
+    return this.httpClient.post<FightResultsDto>(`${environment.apiUrl}/fights`, opponentsDto).pipe(
+      map((fightResultsDto: FightResultsDto) => new FightResults(fightResultsDto)),
     );
   }
 

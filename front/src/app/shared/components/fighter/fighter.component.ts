@@ -9,5 +9,5 @@ import { Character } from '../../models/character';
 export class FighterComponent {
   @Input() fighter: Character;
   @Input() urlImg: string;
-  @Input() winner: number;
+  @Input() winner?: Character;
 }

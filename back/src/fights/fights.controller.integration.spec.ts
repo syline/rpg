@@ -84,8 +84,8 @@ describe('Given FightsController', () => {
       expect(response.statusCode).toEqual(HttpStatus.CREATED);
     });
 
-    it('Then it should retrieve fights rounds', () => {
-      expect(response.body.length).toBeGreaterThan(0);
+    it('Then it should retrieve fights results', () => {
+      expect(response.body.rounds.length).toBeGreaterThan(0);
     });
   });
 

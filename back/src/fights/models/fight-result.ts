@@ -5,8 +5,4 @@ export class FightResults {
   winner: Fighter;
   looser: Fighter;
   rounds: IRound[];
-
-  constructor() {
-    this.rounds = [];
-  }
 }

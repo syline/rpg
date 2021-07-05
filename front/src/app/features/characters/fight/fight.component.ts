@@ -4,7 +4,7 @@ import { EMPTY } from 'rxjs';
 import { mergeMap, tap } from 'rxjs/operators';
 import { FightService } from 'src/app/core/services/fight.service';
 import { Character } from 'src/app/shared/models/character';
-import { Round } from 'src/app/shared/models/round';
+import { FightResults } from 'src/app/shared/models/fight-results';
 
 @Component({
   selector: 'app-fight',
@@ -14,8 +14,7 @@ import { Round } from 'src/app/shared/models/round';
 export class FightComponent implements OnInit {
   attacker: Character;
   defender: Character;
-  rounds: Round[];
-  winner: number;
+  fightResults: FightResults;
 
   constructor(
     private fightService: FightService,
@@ -33,22 +32,9 @@ export class FightComponent implements OnInit {
         }
         return EMPTY;
       }),
-      tap((rounds: Round[]) => {
-        this.rounds = rounds;
-        this.playRounds();
-        this.determineWinner();
+      tap((fightResults: FightResults) => {
+        this.fightResults = fightResults;
       })
     ).subscribe();
-  }
-
-  private playRounds(): void {
-    this.rounds.forEach((round: Round) => {
-      this.attacker.health -= round.attackerDamagesReceived;
-      this.defender.health -= round.defenderDamagesReceived;
-    });
-  }
-
-  private determineWinner(): void {
-    this.winner = this.attacker.isAlive() ? this.attacker.id : this.defender.id;
   }
 }

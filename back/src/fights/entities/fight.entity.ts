@@ -8,11 +8,11 @@ export class Fight {
   @PrimaryGeneratedColumn()
   id: number;
   
-  @ManyToOne(() => Character, character => character.fights, { onDelete: 'CASCADE' })
+  @ManyToOne(() => Character, character => character.fights)
   @JoinColumn()
   attacker: Character;
 
-  @ManyToOne(() => Character, character => character.fights, { onDelete: 'CASCADE' })
+  @ManyToOne(() => Character, character => character.fights)
   @JoinColumn()
   defender: Character;
 

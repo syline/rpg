@@ -22,7 +22,7 @@ export class FightsService implements IFightsService {
     return this.fightRepository.getFightsByCharacterId(id);
   }
 
-  async fight(attackerId: number, defenderId: number): Promise<IRound[]> {
+  async fight(attackerId: number, defenderId: number): Promise<FightResults> {
     const { attacker, defender } = await this.getTwoChallengers(attackerId, defenderId);
     
     const fightResults: FightResults = this.launchFight(attacker, defender);
@@ -33,7 +33,7 @@ export class FightsService implements IFightsService {
     
     await this.fightRepository.saveFightResults(fight, winner, looser);
     
-    return fightResults.rounds;
+    return fightResults;
   }
 
   private async getTwoChallengers(attackerId: number, defenderId: number): Promise<IChallengers> {
@@ -49,7 +49,7 @@ export class FightsService implements IFightsService {
   }
 
   private launchFight(attacker: Fighter, defender: Fighter): FightResults {
-    const fightResults = new FightResults();
+    const rounds: IRound[] = [];
 
     if (attacker.isHarmless() && defender.isHarmless()) {
       throw new NoFightError();
@@ -62,23 +62,34 @@ export class FightsService implements IFightsService {
       defender.sufferDamage(defenderDamagesReceived);
 
       if (!defender.isAlive()) {
-        fightResults.rounds.push({ id: nbRound, defenderDamagesReceived, attackerDamagesReceived: 0 });
-
-        fightResults.winner = attacker;
-        fightResults.looser = defender;
+        rounds.push({ id: nbRound, defenderDamagesReceived, attackerDamagesReceived: 0 });
         break;
       }
 
       const attackerDamagesReceived = defender.getAttackDamages(attacker.defense);
       attacker.sufferDamage(attackerDamagesReceived);
 
-      fightResults.rounds.push({ id: nbRound, defenderDamagesReceived, attackerDamagesReceived });
+      rounds.push({ id: nbRound, defenderDamagesReceived, attackerDamagesReceived });
 
       nbRound++;
     }
 
-    fightResults.winner = defender;
-    fightResults.looser = attacker;
+    const fightResults = this.determineWinnerAndLooser(attacker, defender);
+    fightResults.rounds = rounds;
+
+    return fightResults;
+  }
+
+  private determineWinnerAndLooser(attacker: Fighter, defender: Fighter): FightResults {
+    const fightResults = new FightResults();
+    
+    if (attacker.isAlive()) {
+      fightResults.winner = attacker;
+      fightResults.looser = defender;
+    } else {
+      fightResults.winner = defender;
+      fightResults.looser = attacker;
+    }
 
     return fightResults;
   }

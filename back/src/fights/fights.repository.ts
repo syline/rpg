@@ -10,9 +10,9 @@ export class FightsRepository extends Repository<Fight> {
     return this.find({
       where: [
         { attacker: { id } },
-        { defender: { id } }
+        { defender: { id } },
       ],
-      relations: ['attacker', 'defender']
+      relations: ['attacker', 'defender'],
     })
   }
 

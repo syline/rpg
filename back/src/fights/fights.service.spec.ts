@@ -8,8 +8,8 @@ import { NoFightError } from '../errors/no-fight.error';
 import { FightsServiceProvider } from './fights.module';
 import { FightsRepository } from './fights.repository';
 import { IFightsService } from './interfaces/ifights.service';
-import { IRound } from './interfaces/iround';
 import { fightsRepositoryMock } from './mocks/fights.repository.mock';
+import { FightResults } from './models/fight-result';
 import { Fighter } from './models/fighter';
 
 describe('Given FightsService', () => {
@@ -68,7 +68,7 @@ describe('Given FightsService', () => {
     defender.defense = 4;
     defender.magik = 3;
 
-    let rounds: IRound[];
+    let fightResults: FightResults;
     beforeAll(async () => {
       charactersServiceMock.findOne.mockImplementation((id) => {
         if (id === 1) {
@@ -76,7 +76,7 @@ describe('Given FightsService', () => {
         }
         return Promise.resolve(defender);
       });
-      rounds = await service.fight(1, 2);
+      fightResults = await service.fight(1, 2);
     });
 
     it('Then fightRepository.saveFightResults have been called', () => {
@@ -84,7 +84,7 @@ describe('Given FightsService', () => {
     });
 
     it('Then we have all rounds passed', () => {
-      expect(rounds.length).toBeGreaterThan(0);
+      expect(fightResults.rounds.length).toBeGreaterThan(0);
     });
 
     it('Then fight stop when one character is dead', () => {
@@ -93,12 +93,12 @@ describe('Given FightsService', () => {
 
       let i = 0;
       while (fighterA.isAlive() && fighterB.isAlive()) {
-        fighterA.health -= rounds[i].attackerDamagesReceived;
-        fighterB.health -= rounds[i].defenderDamagesReceived;
+        fighterA.health -= fightResults.rounds[i].attackerDamagesReceived;
+        fighterB.health -= fightResults.rounds[i].defenderDamagesReceived;
         i++;
       }
 
-      expect(i).toEqual(rounds.length);
+      expect(i).toEqual(fightResults.rounds.length);
     });
   });
 

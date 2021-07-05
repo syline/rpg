@@ -1,11 +1,10 @@
-import { HttpStatus } from '@nestjs/common';
-import { Body, Controller, HttpException, Inject, Post, UseGuards } from '@nestjs/common';
-import { NoFightError } from '../errors/no-fight.error';
+import { Body, Controller, HttpException, HttpStatus, Inject, Post, UseGuards } from '@nestjs/common';
 import { JwtAuthenticationGuard } from '../authentication/guards/jwt-authentication.guard';
 import { IFIGHTS_SERVICE } from '../constants/services.constant';
+import { NoFightError } from '../errors/no-fight.error';
 import { ChallengersDto } from './dto/fight.dto';
 import { IFightsService } from './interfaces/ifights.service';
-import { IRound } from './interfaces/iround';
+import { FightResults } from './models/fight-result';
 
 @Controller('fights')
 @UseGuards(JwtAuthenticationGuard)
@@ -15,7 +14,7 @@ export class FightsController {
   ) { }
 
   @Post()
-  async fight(@Body() fight: ChallengersDto): Promise<IRound[]> {
+  async fight(@Body() fight: ChallengersDto): Promise<FightResults> {
     return await this.fightsService.fight(fight.attackerId, fight.defenderId)
     .catch((err) => {
       if (err instanceof NoFightError) {

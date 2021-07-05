@@ -14,8 +14,11 @@ export class Fighter {
   nextFightTimeMin?: Date;
   user: User;
 
+  oldHealth: number;
+
   constructor(character: Character) {
     Object.assign(this, character);
+    this.oldHealth = this.health;
   }
 
   isHarmless(): boolean {
@@ -66,6 +69,6 @@ export class Fighter {
   }
 
   heal(): void {
-    this.health = 12;
+    this.health = this.oldHealth;
   }
 }
