@@ -1,10 +1,18 @@
-# Installation de l'application
-Allez dans le dossier `back` et lancez la commande `npm i`.
-Allez dans le dossier `front` et lancez la commande `npm i`.
+# Installation et lancement de l'application
+Dans le projet, ouvrez un terminal et lancez les commandes suivantes : 
 
-# Lancement de l'application
-Allez dans le dossier `back` et lancez la commande `npm run start`.
-Allez dans le dossier `front` et lancez la commande `npm run start`.
+```bash
+cd back
+npm i
+npm run start
+```
+
+Dans un autre terminal du projet, lancez les commandes suivantes : 
+```bash
+cd front
+npm i
+npm run start
+```
 
 Aller sur votre navigateur (Chrome), à l'URL suivante : `http://localhost:4200`
 
