@@ -1,4 +1,4 @@
 export const fightsRepositoryMock = {
-  find: jest.fn(),
-  save: jest.fn(),
+  getFightsByCharacterId: jest.fn(),
+  saveFightResults: jest.fn(),
 }

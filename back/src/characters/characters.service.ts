@@ -1,4 +1,5 @@
 import { Injectable } from '@nestjs/common';
+import { Fighter } from 'src/fights/models/fighter';
 import { DeleteResult, UpdateResult } from 'typeorm';
 import { NB_CHARACTER_MAX } from '../constants/constant';
 import { CharacteristicsEnum } from '../enums/characteristics.enum';
@@ -33,8 +34,8 @@ export class CharactersService implements ICharactersService {
     return this.charactersRepository.getById(id);
   }
 
-  async update(id: number, character: Character): Promise<UpdateResult> {
-    return this.charactersRepository.update(id, character);
+  async update(character: Character): Promise<UpdateResult> {
+    return this.charactersRepository.update(character.id, character);
   }
 
   async remove(id: number): Promise<DeleteResult> {
@@ -90,5 +91,24 @@ export class CharactersService implements ICharactersService {
   ): void {
     characterToUpdate.skills -= health;
     characterToUpdate.health += health;
+  }
+
+  getUpdatedWinner(winner: Fighter): Character {
+    winner.levelUp();
+    winner.heal();
+    
+    const character = new Character();
+    Object.assign(character, winner);
+
+    return character;
+  }
+
+  getUpdatedLooser(looser: Fighter): Character {
+    looser.levelDown();
+    looser.heal();
+
+    const character = new Character();
+    Object.assign(character, looser);
+    return character;
   }
 }

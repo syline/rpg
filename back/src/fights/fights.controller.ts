@@ -16,7 +16,7 @@ export class FightsController {
 
   @Post()
   async fight(@Body() fight: ChallengersDto): Promise<IRound[]> {
-    return await this.fightsService.fights(fight.attackerId, fight.defenderId)
+    return await this.fightsService.fight(fight.attackerId, fight.defenderId)
     .catch((err) => {
       if (err instanceof NoFightError) {
         throw new HttpException(err.message, HttpStatus.NOT_ACCEPTABLE);

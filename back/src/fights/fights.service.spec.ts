@@ -1,22 +1,20 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import { getRepositoryToken } from '@nestjs/typeorm';
-import { charactersServiceMock } from '../characters/mocks/characters.service.mock';
-import { Repository } from 'typeorm';
+import { CharactersRepository } from '../characters/characters.repository';
 import { Character } from '../characters/entities/character.entity';
-import { ICharactersService } from '../characters/interfaces/icharacters.service';
 import { characterRepositoryMock } from '../characters/mocks/characters.repository.mock';
+import { charactersServiceMock } from '../characters/mocks/characters.service.mock';
 import { ICHARACTERS_SERVICE, IFIGHTS_SERVICE } from '../constants/services.constant';
-import { Fight } from './entities/fight.entity';
+import { NoFightError } from '../shared/errors/no-fight.error';
 import { FightsServiceProvider } from './fights.module';
+import { FightsRepository } from './fights.repository';
 import { IFightsService } from './interfaces/ifights.service';
 import { IRound } from './interfaces/iround';
 import { fightsRepositoryMock } from './mocks/fights.repository.mock';
-import { NoFightError } from '../shared/errors/no-fight.error';
+import { Fighter } from './models/fighter';
 
 describe('Given FightsService', () => {
   let service: IFightsService;
-  let repository: Repository<Fight>;
-  let charactersService: ICharactersService;
+  let repository: FightsRepository;
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
@@ -27,20 +25,18 @@ describe('Given FightsService', () => {
           useValue: charactersServiceMock,
         },
         {
-          provide: getRepositoryToken(Fight),
+          provide: FightsRepository,
           useValue: fightsRepositoryMock,
         },
         {
-          provide: getRepositoryToken(Character),
+          provide: CharactersRepository,
           useValue: characterRepositoryMock,
         }
       ],
     }).compile();
 
     service = module.get<IFightsService>(IFIGHTS_SERVICE);
-    charactersService = module.get<ICharactersService>(ICHARACTERS_SERVICE);
-
-    repository = module.get(getRepositoryToken(Fight));
+    repository = module.get(FightsRepository);
   });
 
   describe('When service is called', () => {
@@ -55,13 +51,7 @@ describe('Given FightsService', () => {
     });
 
     it('Then repository.find is called with specific parameter', () => {
-      expect(repository.find).toHaveBeenCalledWith({
-        where: [
-          { attacker: { id: 1 } },
-          { defender: { id: 1 } }
-        ],
-        relations: ['attacker', 'defender']
-      })
+      expect(repository.getFightsByCharacterId).toHaveBeenCalledWith(1);
     });
   });
 
@@ -86,15 +76,11 @@ describe('Given FightsService', () => {
         }
         return Promise.resolve(defender);
       });
-      rounds = await service.fights(1, 2);
+      rounds = await service.fight(1, 2);
     });
 
-    it('Then charactersService.update is called twice', () => {
-      expect(charactersService.update).toHaveBeenCalledTimes(2);
-    });
-
-    it('Then fightRepository.save have been called', () => {
-      expect(fightsRepositoryMock.save).toHaveBeenCalled();
+    it('Then fightRepository.saveFightResults have been called', () => {
+      expect(fightsRepositoryMock.saveFightResults).toHaveBeenCalled();
     });
 
     it('Then we have all rounds passed', () => {
@@ -102,10 +88,13 @@ describe('Given FightsService', () => {
     });
 
     it('Then fight stop when one character is dead', () => {
+      const fighterA = new Fighter(attacker);
+      const fighterB = new Fighter(defender);
+
       let i = 0;
-      while (attacker.isAlive() && defender.isAlive()) {
-        attacker.health -= rounds[i].attackerDamagesReceived;
-        defender.health -= rounds[i].defenderDamagesReceived;
+      while (fighterA.isAlive() && fighterB.isAlive()) {
+        fighterA.health -= rounds[i].attackerDamagesReceived;
+        fighterB.health -= rounds[i].defenderDamagesReceived;
         i++;
       }
 
@@ -126,18 +115,17 @@ describe('Given FightsService', () => {
     defender.defense = 4;
     defender.magik = 3;
 
-    beforeAll(() => {
+    beforeEach(() => {
       charactersServiceMock.findOne.mockImplementation((id) => {
         if (id === 1) {
           return Promise.resolve(attacker);
         }
         return Promise.resolve(defender);
-      });
-     
+      });     
     });
 
     it('Then fight throw an error', async() => {
-      await expect(service.fights(1, 2)).rejects.toThrowError(NoFightError);
+      await expect(service.fight(1, 2)).rejects.toThrowError(NoFightError);
     });
   });
 });

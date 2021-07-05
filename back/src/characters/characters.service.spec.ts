@@ -82,12 +82,15 @@ describe('Given CharactersService', () => {
   })
 
   describe('When update a character', () => {
+    const character = new Character();
+    character.id = 1;
+
     beforeEach(() => {
-      service.update(1, new Character());
+      service.update(character);
     });
 
     it('Then repository.update should have been called with character\'s info', () => {
-      expect(repository.update).toHaveBeenCalledWith(1, new Character());
+      expect(repository.update).toHaveBeenCalledWith(character.id, character);
     });
   })
 

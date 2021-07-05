@@ -1,6 +1,6 @@
-import { Character } from "../../characters/entities/character.entity";
+import { Fighter } from "../models/fighter";
 
 export interface IChallengers {
-  attacker: Character;
-  defender: Character;
+  attacker: Fighter;
+  defender: Fighter;
 }

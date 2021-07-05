@@ -1,5 +1,5 @@
+import { Fighter } from "../../fights/models/fighter";
 import { UpdateResult } from "typeorm";
-import { UpdateCharacterDto } from "../dto/update-character.dto";
 import { Character } from "../entities/character.entity";
 
 export interface ICharactersService {
@@ -11,7 +11,7 @@ export interface ICharactersService {
 
   getOpponent(characterId: number): Promise<Character>;
 
-  update(id: number, updateCharacterDto: UpdateCharacterDto): Promise<UpdateResult>;
+  update(character: Character): Promise<UpdateResult>;
 
   forwardSkillsToCharacter(
     characterId: number,
@@ -22,4 +22,8 @@ export interface ICharactersService {
   ): Promise<Character>;
 
   remove(id: number);
+
+  getUpdatedWinner(winner: Fighter): Character;
+
+  getUpdatedLooser(looser: Fighter): Character;
 }

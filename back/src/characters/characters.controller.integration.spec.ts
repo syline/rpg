@@ -1,14 +1,15 @@
 import { HttpStatus, INestApplication } from '@nestjs/common';
 import { JwtModule, JwtService } from '@nestjs/jwt';
 import { Test, TestingModule } from '@nestjs/testing';
-import { getRepositoryToken } from '@nestjs/typeorm';
-import { NoOpponentError } from '../shared/errors/no-opponent.error';
+import { FightsRepository } from '../fights/fights.repository';
+import { Fighter } from '../fights/models/fighter';
 import * as request from 'supertest';
 import { JwtStrategy } from '../authentication/strategies/jwt.strategy';
 import { JWT_SECRET, TOKEN_DURATION } from '../constants/jwt.contant';
 import { Fight } from '../fights/entities/fight.entity';
 import { FightsServiceProvider } from '../fights/fights.module';
 import { fightsRepositoryMock } from '../fights/mocks/fights.repository.mock';
+import { NoOpponentError } from '../shared/errors/no-opponent.error';
 import { CharactersController } from './characters.controller';
 import { CharacterServiceProvider } from './characters.module';
 import { CharactersRepository } from './characters.repository';
@@ -45,7 +46,7 @@ describe('Given CharactersController', () => {
           useValue: characterRepositoryMock,
         },
         {
-          provide: getRepositoryToken(Fight),
+          provide: FightsRepository,
           useValue: fightsRepositoryMock,
         }
       ],
@@ -298,9 +299,9 @@ describe('Given CharactersController', () => {
 
   describe('When user is logged-in and get character`s fights', () => {
     let response;
-    const fights = [new Fight(new Character(), new Character(), 1)];
+    const fights = [new Fight(new Fighter({ } as Character), new Fighter({ } as Character), 1)];
     beforeEach(async () => {
-      fightsRepositoryMock.find.mockReturnValue(Promise.resolve(fights));
+      fightsRepositoryMock.getFightsByCharacterId.mockReturnValue(Promise.resolve(fights));
       response = await request(app.getHttpServer())
       .get('/characters/1/fights')
       .set('Authorization', `Bearer ${accessToken}`);

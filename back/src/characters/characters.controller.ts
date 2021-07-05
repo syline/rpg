@@ -65,7 +65,7 @@ export class CharactersController {
       updateCharacterDto.magik,
     )
       .then((characterToUpdate: Character) => {
-        return this.charactersService.update(id, characterToUpdate);
+        return this.charactersService.update(characterToUpdate);
       })
       .catch((err) => {
         if (err instanceof LevelUpError) {
