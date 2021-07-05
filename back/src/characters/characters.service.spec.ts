@@ -183,7 +183,7 @@ describe('Given CharactersService', () => {
     });
 
     it('Then repository.delete should have been called with character\'s id', () => {
-      expect(repository.delete).toHaveBeenCalledWith(1);
+      expect(repository.update).toHaveBeenCalledWith(1, { deleted: true });
     });
   })
 });

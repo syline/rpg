@@ -5,14 +5,14 @@
 </div>
 
 <div fxLayout="row" fxLayoutAlign="center center" fxLayoutGap="50px">
-  <app-fighter fxFlex="20" [fighter]="attacker" urlImg="../../../assets/attacker.png" [winner]="fightResults.winner"></app-fighter>
+  <app-fighter fxFlex="20" [fighter]="attacker" urlImg="../../../assets/attacker.png" [winner]="fightResults?.winner"></app-fighter>
 
   <p class="vs" *ngIf="defender.id">VS</p>
 
-  <app-fighter *ngIf="defender.id" fxFlex="20" [fighter]="defender" urlImg="../../../assets/defender.png" [winner]="fightResults.winner"></app-fighter>
+  <app-fighter *ngIf="defender.id" fxFlex="20" [fighter]="defender" urlImg="../../../assets/defender.png" [winner]="fightResults?.winner"></app-fighter>
 </div>
 
-<div *ngFor="let round of fightResults.rounds" fxLayout="column" fxLayoutAlign="center center">
+<div *ngFor="let round of fightResults?.rounds" fxLayout="column" fxLayoutAlign="center center">
   <p>Tour {{ round.id }} : </p>
   <p>{{ defender.name }} reçoit {{ round.defenderDamagesReceived }} points de dégât</p>
   <p>{{ attacker.name }} reçoit {{ round.attackerDamagesReceived }} points de dégât</p>

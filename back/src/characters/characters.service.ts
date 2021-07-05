@@ -17,6 +17,7 @@ export class CharactersService implements ICharactersService {
   
   async create(name: string, userId: number): Promise<Character> {
     const characters = await this.findAllByUserId(userId);
+    
     if (characters.length >= NB_CHARACTER_MAX) {
       throw new MaxNbCharacterError();
     }
@@ -39,7 +40,7 @@ export class CharactersService implements ICharactersService {
   }
 
   async remove(id: number): Promise<DeleteResult> {
-    return this.charactersRepository.delete(id);
+    return this.charactersRepository.update(id, { deleted: true });
   }
 
   async getOpponent(characterId: number): Promise<Character> {

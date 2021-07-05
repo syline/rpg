@@ -8,11 +8,11 @@ export class CharactersRepository extends Repository<Character> {
 
   async getByUserId(id: number): Promise<Character[]> {
     const user = new User({ id });
-    return this.find({ user });
+    return this.find({ user, deleted: false });
   }
 
   async getById(id: number): Promise<Character> {
-    return this.findOne({ id });
+    return this.findOne({ id, deleted: false });
   }
 
   async getOpponent(id: number): Promise<Character> {
@@ -37,6 +37,8 @@ export class CharactersRepository extends Repository<Character> {
       FROM CHARACTER C, user_rank UR
       LEFT OUTER JOIN FIGHT F ON F.ATTACKERID = C.ID OR F.DEFENDERID = C.ID
       WHERE (C.NEXTFIGHTTIMEMIN IS NULL OR C.NEXTFIGHTTIMEMIN <= DATETIME('NOW'))
+      AND C.ID <> ${id}
+      AND C.DELETED = 0
       GROUP BY C.ID
       ORDER BY DIFF_RANK, NB_FIGHT, RAND
       LIMIT 1

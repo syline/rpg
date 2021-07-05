@@ -1,3 +1,4 @@
+import { Exclude } from "class-transformer";
 import { Column, Entity, ManyToOne, OneToMany, PrimaryGeneratedColumn } from "typeorm";
 import { Fight } from "../../fights/entities/fight.entity";
 import { User } from "../../users/entities/user.entity";
@@ -33,12 +34,18 @@ export class Character {
   })
   nextFightTimeMin?: Date;
 
-  @ManyToOne(() => User, user => user.characters, { onDelete: 'CASCADE' })
+  @ManyToOne(() => User, user => user.characters)
   user: User;
 
   @OneToMany(() => Fight, fight => fight.attacker)
   fights: Fight[];
 
+  @Column({
+    default: false
+  })
+  @Exclude()
+  deleted: boolean
+  
   constructor(name?: string, userId?: number) {
     this.skills = 12;
     this.health = 10;
