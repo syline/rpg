@@ -1,10 +1,10 @@
 import { forwardRef, Module, Provider } from '@nestjs/common';
-import { CharactersService } from './characters.service';
-import { CharactersController } from './characters.controller';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { Character } from './entities/character.entity';
 import { ICHARACTERS_SERVICE } from '../constants/services.constant';
 import { FightsModule } from '../fights/fights.module';
+import { CharactersController } from './characters.controller';
+import { CharactersRepository } from './characters.repository';
+import { CharactersService } from './characters.service';
 
 export const CharacterServiceProvider: Provider = {
   provide: ICHARACTERS_SERVICE,
@@ -13,7 +13,7 @@ export const CharacterServiceProvider: Provider = {
 
 @Module({
   imports: [
-    TypeOrmModule.forFeature([Character]),
+    TypeOrmModule.forFeature([CharactersRepository]),
     forwardRef(() => FightsModule),
   ],
   controllers: [

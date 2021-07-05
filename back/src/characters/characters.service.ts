@@ -1,43 +1,48 @@
 import { Injectable } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
-import { Repository, UpdateResult } from 'typeorm';
+import { DeleteResult, UpdateResult } from 'typeorm';
+import { NB_CHARACTER_MAX } from '../constants/constant';
 import { CharacteristicsEnum } from '../enums/characteristics.enum';
 import { LevelUpError } from '../shared/errors/level-up.error';
 import { MaxNbCharacterError } from '../shared/errors/max-nb-character.error';
-import { User } from '../users/entities/user.entity';
+import { CharactersRepository } from './characters.repository';
 import { Character } from './entities/CHARACTER.entity';
-import { getOpponentQuery } from './get-opponent-query';
 import { ICharactersService } from './interfaces/iCHARACTERs.service';
 
 @Injectable()
 export class CharactersService implements ICharactersService {
   constructor(
-    @InjectRepository(Character)
-    private characterRepository: Repository<Character>,
+    private charactersRepository: CharactersRepository,
   ) { }
   
   async create(name: string, userId: number): Promise<Character> {
     const characters = await this.findAllByUserId(userId);
-    if (characters.length > 9) {
+    if (characters.length >= NB_CHARACTER_MAX) {
       throw new MaxNbCharacterError();
     }
 
     const character = new Character(name, userId);
     
-    return await this.characterRepository.save(character);
+    return this.charactersRepository.save(character);
   }
 
   async findAllByUserId(userId: number): Promise<Character[]> {
-    const user = new User({ id: userId });
-    return await this.characterRepository.find({ user });
+    return this.charactersRepository.getByUserId(userId);
   }
 
   async findOne(id: number): Promise<Character> {
-    return await this.characterRepository.findOne({ id });
+    return this.charactersRepository.getById(id);
   }
 
   async update(id: number, character: Character): Promise<UpdateResult> {
-    return await this.characterRepository.update(id, character);
+    return this.charactersRepository.update(id, character);
+  }
+
+  async remove(id: number): Promise<DeleteResult> {
+    return this.charactersRepository.delete(id);
+  }
+
+  async getOpponent(characterId: number): Promise<Character> {
+    return this.charactersRepository.getOpponent(characterId);
   }
 
   async forwardSkillsToCharacter(
@@ -49,10 +54,10 @@ export class CharactersService implements ICharactersService {
   ): Promise<Character> {
     const character = await this.findOne(characterId);
 
-    this.forwardSkills(character, attack, CharacteristicsEnum.attack);
-    this.forwardSkills(character, defense, CharacteristicsEnum.defense);
-    this.forwardSkills(character, magik, CharacteristicsEnum.magik);
-    this.forwardHealth(character, health);
+    this.assignSkills(character, attack, CharacteristicsEnum.attack);
+    this.assignSkills(character, defense, CharacteristicsEnum.defense);
+    this.assignSkills(character, magik, CharacteristicsEnum.magik);
+    this.assignHealth(character, health);
     
     if (character.skills < 0) {
       throw new LevelUpError();
@@ -61,7 +66,7 @@ export class CharactersService implements ICharactersService {
     return character;
   } 
 
-  private forwardSkills(
+  private assignSkills(
     characterToUpdate: Character, 
     skill: number,
     characteristic: CharacteristicsEnum,
@@ -79,25 +84,11 @@ export class CharactersService implements ICharactersService {
     }
   }
 
-  private forwardHealth(
+  private assignHealth(
     characterToUpdate: Character, 
     health: number, 
   ): void {
     characterToUpdate.skills -= health;
     characterToUpdate.health += health;
-
-  }
-
-  async remove(id: number) {
-    return await this.characterRepository.delete(id);
-  }
-
-  async getOpponent(characterId: number): Promise<Character> {
-    return await this.characterRepository.query(getOpponentQuery(characterId))
-    .then((characters: Character[]) => {
-      if (characters.length > 0) {
-        return characters[0];
-      }
-    });
   }
 }

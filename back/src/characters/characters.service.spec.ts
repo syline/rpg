@@ -1,31 +1,30 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import { getRepositoryToken } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
 import { ICHARACTERS_SERVICE } from '../constants/services.constant';
 import { MaxNbCharacterError } from '../shared/errors/max-nb-character.error';
 import { User } from '../users/entities/user.entity';
 import { CharacterServiceProvider } from './characters.module';
+import { CharactersRepository } from './characters.repository';
 import { CharactersService } from './characters.service';
 import { Character } from './entities/character.entity';
 import { characterRepositoryMock } from './mocks/characters.repository.mock';
 
 describe('Given CharactersService', () => {
   let service: CharactersService;
-  let repository: Repository<Character>;
+  let repository: CharactersRepository;
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
       providers: [
         CharacterServiceProvider,
         {
-          provide: getRepositoryToken(Character),
+          provide: CharactersRepository,
           useValue: characterRepositoryMock,
         }
       ],
     }).compile();
 
     service = module.get<CharactersService>(ICHARACTERS_SERVICE);
-    repository = module.get(getRepositoryToken(Character));
+    repository = module.get<CharactersRepository>(CharactersRepository);
   });
 
   describe('When service is called', () => {
@@ -36,7 +35,7 @@ describe('Given CharactersService', () => {
 
   describe('When add a character', () => {
     beforeEach(() => {
-      characterRepositoryMock.find.mockReturnValue(Promise.resolve([]));
+      characterRepositoryMock.getByUserId.mockReturnValue(Promise.resolve([]));
       service.create('name', 1);
     });
 
@@ -54,7 +53,7 @@ describe('Given CharactersService', () => {
       for (let i = 0; i < 10; i++) {
         characters.push(new Character());
       }
-      characterRepositoryMock.find.mockReturnValue(Promise.resolve(characters));
+      characterRepositoryMock.getByUserId.mockReturnValue(Promise.resolve(characters));
     });
 
     it('Then repository.save should throw an error', () => {
@@ -68,7 +67,7 @@ describe('Given CharactersService', () => {
     });
 
     it('Then repository.find should have been called with userId', () => {
-      expect(repository.find).toHaveBeenCalledWith({ user: { id: 1 } });
+      expect(repository.getByUserId).toHaveBeenCalledWith(1);
     });
   })
 
@@ -78,7 +77,7 @@ describe('Given CharactersService', () => {
     });
 
     it('Then repository.find should have been called with character\'s id', () => {
-      expect(repository.findOne).toHaveBeenCalledWith({ id: 1 });
+      expect(repository.getById).toHaveBeenCalledWith(1);
     });
   })
 
@@ -100,7 +99,7 @@ describe('Given CharactersService', () => {
       let updatedCharacter: Character;
 
       beforeEach(async () => {
-        characterRepositoryMock.findOne.mockReturnValue(Promise.resolve(new Character()));
+        characterRepositoryMock.getById.mockReturnValue(Promise.resolve(new Character()));
         updatedCharacter = await service.forwardSkillsToCharacter(1, 12, 0, 0, 0);
       });
 
@@ -132,7 +131,7 @@ describe('Given CharactersService', () => {
     and level up for 13 health points`,
     () => {
       beforeEach(async () => {
-        characterRepositoryMock.findOne.mockReturnValue(Promise.resolve(new Character()));
+        characterRepositoryMock.getById.mockReturnValue(Promise.resolve(new Character()));
       });
 
       it('Then an error is thrown', async () => {
@@ -149,7 +148,7 @@ describe('Given CharactersService', () => {
       let updatedCharacter: Character;
 
       beforeEach(async () => {
-        characterRepositoryMock.findOne.mockReturnValue(Promise.resolve(new Character()));
+        characterRepositoryMock.getById.mockReturnValue(Promise.resolve(new Character()));
         updatedCharacter = await service.forwardSkillsToCharacter(1, 0, 9, 0, 0);
       });
 

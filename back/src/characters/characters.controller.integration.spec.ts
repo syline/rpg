@@ -2,14 +2,16 @@ import { HttpStatus, INestApplication } from '@nestjs/common';
 import { JwtModule, JwtService } from '@nestjs/jwt';
 import { Test, TestingModule } from '@nestjs/testing';
 import { getRepositoryToken } from '@nestjs/typeorm';
+import { NoOpponentError } from '../shared/errors/no-opponent.error';
 import * as request from 'supertest';
 import { JwtStrategy } from '../authentication/strategies/jwt.strategy';
-import { JWT_SECRET } from '../constants/jwt.contant';
+import { JWT_SECRET, TOKEN_DURATION } from '../constants/jwt.contant';
 import { Fight } from '../fights/entities/fight.entity';
 import { FightsServiceProvider } from '../fights/fights.module';
 import { fightsRepositoryMock } from '../fights/mocks/fights.repository.mock';
 import { CharactersController } from './characters.controller';
 import { CharacterServiceProvider } from './characters.module';
+import { CharactersRepository } from './characters.repository';
 import { CreateCharacterDto } from './dto/create-character.dto';
 import { UpdateCharacterDto } from './dto/update-character.dto';
 import { Character } from './entities/character.entity';
@@ -28,7 +30,7 @@ describe('Given CharactersController', () => {
       imports: [
         JwtModule.register({
           secret: JWT_SECRET,
-          signOptions: { expiresIn: '1h' },
+          signOptions: { expiresIn: TOKEN_DURATION },
         }),
       ],
       controllers: [
@@ -39,7 +41,7 @@ describe('Given CharactersController', () => {
         CharacterServiceProvider,
         FightsServiceProvider,
         {
-          provide: getRepositoryToken(Character),
+          provide: CharactersRepository,
           useValue: characterRepositoryMock,
         },
         {
@@ -60,7 +62,7 @@ describe('Given CharactersController', () => {
     let response;
 
     beforeEach(async () => {
-      characterRepositoryMock.find.mockReturnValue(Promise.resolve([]));
+      characterRepositoryMock.getByUserId.mockReturnValue(Promise.resolve([]));
       characterRepositoryMock.save.mockReturnValue(Promise.resolve(new Character()));
       response = await request(app.getHttpServer())
       .post('/characters')
@@ -89,7 +91,7 @@ describe('Given CharactersController', () => {
       for (let i = 0; i < 10; i++) {
         characters.push(new Character());
       }
-      characterRepositoryMock.find.mockReturnValue(Promise.resolve(characters));
+      characterRepositoryMock.getByUserId.mockReturnValue(Promise.resolve(characters));
       characterRepositoryMock.save.mockReturnValue(Promise.resolve(new Character()));
       response = await request(app.getHttpServer())
       .post('/characters')
@@ -123,7 +125,7 @@ describe('Given CharactersController', () => {
     let response;
 
     beforeEach(async () => {
-      characterRepositoryMock.findOne.mockReturnValue(Promise.resolve(character));
+      characterRepositoryMock.getById.mockReturnValue(Promise.resolve(character));
       response = await request(app.getHttpServer())
       .get('/characters/1')
       .set('Authorization', `Bearer ${accessToken}`);
@@ -158,7 +160,7 @@ describe('Given CharactersController', () => {
     let response;
 
     beforeEach(async () => {
-      characterRepositoryMock.findOne.mockReturnValue(Promise.resolve(new Character()));
+      characterRepositoryMock.getById.mockReturnValue(Promise.resolve(new Character()));
 
       response = await request(app.getHttpServer())
       .patch('/characters/1')
@@ -175,7 +177,7 @@ describe('Given CharactersController', () => {
     let response;
 
     beforeEach(async () => {
-      characterRepositoryMock.findOne.mockReturnValue(Promise.resolve(new Character()));
+      characterRepositoryMock.getById.mockReturnValue(Promise.resolve(new Character()));
 
       const updateCharacter = new UpdateCharacterDto();
       updateCharacter.attack = 12;
@@ -247,7 +249,7 @@ describe('Given CharactersController', () => {
     const character = new Character();
 
     beforeEach(async () => {
-      characterRepositoryMock.query.mockReturnValue(Promise.resolve([character]))
+      characterRepositoryMock.getOpponent.mockReturnValue(Promise.resolve(character))
       response = await request(app.getHttpServer())
       .get('/characters/1/opponent')
       .set('Authorization', `Bearer ${accessToken}`);
@@ -270,18 +272,14 @@ describe('Given CharactersController', () => {
     let response;
 
     beforeEach(async () => {
-      characterRepositoryMock.query.mockReturnValue(Promise.resolve({}))
+      characterRepositoryMock.getOpponent.mockRejectedValue(new NoOpponentError());
       response = await request(app.getHttpServer())
       .get('/characters/1/opponent')
       .set('Authorization', `Bearer ${accessToken}`);
     });
 
-    it('Then response status code = 200', () => {
-      expect(response.statusCode).toEqual(HttpStatus.OK);
-    });
-
-    it('Then it should retrieve an opponent', () => {
-      expect(response.body).toEqual({}); 
+    it('Then response status code = 404', () => {
+      expect(response.statusCode).toEqual(HttpStatus.NOT_FOUND);
     });
   });
 

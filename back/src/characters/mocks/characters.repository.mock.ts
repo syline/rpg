@@ -1,8 +1,8 @@
 export const characterRepositoryMock = {
   save: jest.fn(), 
-  findOne: jest.fn(),
-  find: jest.fn(),
+  getByUserId: jest.fn(),
+  getById: jest.fn(),
   update: jest.fn(),
   delete: jest.fn(),
-  query: jest.fn(),
-}
+  getOpponent: jest.fn(),
+};
