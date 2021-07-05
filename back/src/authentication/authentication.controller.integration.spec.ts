@@ -2,6 +2,7 @@ import { HttpStatus, INestApplication } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { Test, TestingModule } from '@nestjs/testing';
 import * as bcrypt from 'bcrypt';
+import { CredentialsError } from '../errors/credentials.error';
 import * as request from 'supertest';
 import { LoginAlreadyExistError } from '../errors/login-already-exist.error';
 import { User } from '../users/entities/user.entity';
@@ -115,5 +116,22 @@ describe('Given AuthenticationController', () => {
     it('Then it should retreive access token', () => {
       expect(response.body).toEqual({ id: 1, login: 'test', accessToken: '' });
     });
+  })
+
+  describe('When log in with invalid user and password', () => {
+    let response;
+
+    beforeEach(async () => {
+      userRepositoryMock.getByLogin.mockRejectedValue(new CredentialsError());
+
+      response = await request(app.getHttpServer())
+      .post('/authentication/login')
+      .send({ login: 'test', password: 'test' });
+    });
+
+    it('Then response status code = 403', () => {
+      expect(response.statusCode).toEqual(HttpStatus.FORBIDDEN);
+    });
+
   })
 });

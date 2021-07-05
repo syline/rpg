@@ -38,7 +38,7 @@ export class AuthenticationController {
     return this.authenticationService.getAccessToken(request.user)
     .catch((err) => {
       if (err instanceof CredentialsError) {
-        throw new HttpException(err.message, HttpStatus.UNAUTHORIZED);
+        throw new HttpException(err.message, HttpStatus.FORBIDDEN);
       } else {
         throw new HttpException('Une erreur est survenue', HttpStatus.INTERNAL_SERVER_ERROR);
       }

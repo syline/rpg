@@ -20,7 +20,7 @@ export class LocalStrategy extends PassportStrategy(Strategy) {
     return this.authenticationService.checkLoginPassword(login, password)
       .catch((err) => {
         if (err instanceof CredentialsError) {
-          throw new HttpException(err.message, HttpStatus.UNAUTHORIZED);
+          throw new HttpException(err.message, HttpStatus.FORBIDDEN);
         } else {
           throw new HttpException('Une erreur est survenue', HttpStatus.INTERNAL_SERVER_ERROR);
         }
